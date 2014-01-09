@@ -58,7 +58,7 @@ function processBounceMessages () {
 						if (err) { console.log('SES Bounces User Error:' + err); return;};
 						if (!user) {return};
 
-						bouncedRecipient.reportingMTA = messageContent.bounce.reportingMTA;
+						bouncedRecipient.reportingMTA = messageContent.bounce.reportingMTA || '';
 						bouncedRecipient.timestamp = messageContent.bounce.timestamp;
 						bouncedRecipient.bounceType = messageContent.bounce.bounceType;
 						bouncedRecipient.bounceSubType = messageContent.bounce.bounceSubType;
@@ -102,9 +102,9 @@ function processComplaintsMessage () {
 						if (err) { console.log('SES Complaints User Error:' + err); return;};
 						if (!user) {return};
 
-						complaintRecipient.complaintFeedBackType = messageContent.complaint.complaintFeedbackType;
+						complaintRecipient.complaintFeedBackType = messageContent.complaint.complaintFeedbackType || '';
 						complaintRecipient.timestamp = messageContent.complaint.timestamp;
-						complaintRecipient.userAgent = messageContent.complaint.userAgent;
+						complaintRecipient.userAgent = messageContent.complaint.userAgent || '';
 
 						user.emailLocked = true;
 						user.emailLockedReason = JSON.stringify(complaintRecipient);
