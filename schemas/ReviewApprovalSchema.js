@@ -113,12 +113,12 @@ ReviewApprovalSchema.statics.finishApproval = function (Status, Type, ItemID, Si
                 if (site && dataOwner) {
                     if (Status == "Published") {
                         mailer.sendSiteApprovedEmail(dataOwner, site, function (err) {
-                            if( err ) return next( err );
+                            //if( err ) return next( err );
                             next(null);
                         });
                     } else if (Status == 'Draft') {
                         mailer.sendSiteSentBackEmail(dataOwner, site, function (err) {
-                            if( err ) return next( err );
+                            //if( err ) return next( err );
                             next(null);
                         });
                     };

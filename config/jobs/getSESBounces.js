@@ -35,7 +35,7 @@ var j = schedule.scheduleJob(rule, function(){
 });
 
 function getBounceMessage (next) {
-	sqs.receiveMessage({QueueUrl: bounceURL}, function (err, data) { 
+	sqs.receiveMessage({QueueUrl: bounceURL, MaxNumberOfMessages: 5}, function (err, data) { 
 		if (err) { return next(err) };
 		next(err, data);
 	});
@@ -79,7 +79,7 @@ function processBounceMessages () {
 }
 
 function getComplaintsMessage (next) {
-	sqs.receiveMessage({QueueUrl: complaintURL}, function (err, data) { 
+	sqs.receiveMessage({QueueUrl: complaintURL, MaxNumberOfMessages: 5}, function (err, data) { 
 		if (err) { return next(err) };
 		next(err, data);
 	});
