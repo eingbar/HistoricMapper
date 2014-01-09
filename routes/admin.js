@@ -64,6 +64,10 @@ exports.postEditUsers = function(req, res, next){
 				user.userName = req.body.userName;
 				user.approved = (req.body.approved === "true");
 				user.ModDailyDigest = (req.body.ModDailyDigest === "true");
+				if (req.body.allowEmailAgain == 'true') {
+					user.emailLocked = false;
+					user.emailLockedReason = null;
+				};
 
 				user.save(function (err) {
 					if( err ) throw err;

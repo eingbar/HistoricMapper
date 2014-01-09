@@ -1,6 +1,12 @@
 <% include ../../head %>
 
 <div class="container">
+	<% if (model.emailLocked) {%>
+        <div class="container alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            The email address "<%=model.email%>" has been locked, and email can not be sent to it. See email locked reason below.
+        </div>
+    <%};%>
 	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
 		<h3>Edit User</h3>
 	</div>
@@ -27,6 +33,21 @@
 			<div class="row">
 				<div class="col-md-3 form-group"><label for="email">Email Address</label><input type="text" name="email" id="email" class="form-control" value="<%=model.email%>"><input type="hidden" id="existingEmail" value="<%=model.email%>"></div>
 				<div class="col-md-3 form-group"><label for="screenName">Screen Name</label><input type="text" name="screenName" id="screenName" class="form-control" value="<%=model.screenName%>"><input type="hidden" id="existingScreenName" value="<%=model.screenName%>"></div>
+				<% if (model.emailLocked) {%>
+					<div class="form-group col-md-6">
+		    			<strong>Email Locked Reason</strong><br>
+		    			<%
+		    			var reason = JSON.parse(model.emailLockedReason);		    			
+		    			for (var property in reason) {%>
+		    				<strong><%=property%>: </strong><span><%=reason[property]%></span><br>
+		    			<%};%><br>
+		    			<div class="checkbox">
+						    <label>
+					      		<input type="checkbox" name="allowEmailAgain" value="true"> <strong>Allow email again</strong>
+						    </label>
+					  </div>
+		    		</div>
+				<%};%>
 			</div>
 			<div class="row">
 				<div class="col-md-2 form-group">

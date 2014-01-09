@@ -1,6 +1,12 @@
 <% include ../head %>
 
 <div class="container">
+	<% if (model.emailLocked) {%>
+        <div class="container alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            The email address "<%=model.email%>" has been locked, and email can not be sent to it. Please contact an administrator for help.
+        </div>
+    <%};%>
 	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
 		<h3>Edit Your User Details</h3>
 	</div>	

@@ -63,7 +63,7 @@ var indexRoutes = require('./routes/index');
 app.get('/', indexRoutes.index);
 app.get('/historicdistricts/list', indexRoutes.historicDistricts);
 app.get('/historicsites/list', indexRoutes.placesGeoJson);
-app.get('/historicsites/import', indexRoutes.importSites)
+app.get('/historicsites/import', Auth.isAdministrator, indexRoutes.importSites)
 
 /*Site Management Routes*/
 var sites = require('./routes/sites');

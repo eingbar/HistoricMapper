@@ -1,5 +1,6 @@
 //http://www.nodemailer.com/
 var nodemailer = require('nodemailer');
+var _ = require('underscore');
 //aws account CityOfEureka.CA@gnomon.com
 //Access Key ID: AKIAJUNAQGECP3J3SHYQ
 //Secret Access Key: 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
@@ -14,13 +15,40 @@ var transport = nodemailer.createTransport("SES", {
 //     secureConnection: false, // use SSL
 //     port: 25
 // });
+//http://docs.aws.amazon.com/ses/latest/DeveloperGuide/mailbox-simulator.html
+// transport.sendMail({
+// 	to: 'bounce@simulator.amazonses.com',
+// 	from: GLOBAL.supportEmail,
+// 	subject: 'Tesst',
+// 	html: 'test'
+// }, function (err, response) {
+// 	if(error){
+//         console.log(error);
+//     }else{
+//         console.log("Message sent: " + response.message);
+//     }
+// });
+
+function sendMail (email, next) {
+	var mongoose = require( 'mongoose' );
+	var User = mongoose.model( 'User' );
+	User.count({email: email.to, emailLocked: true}, function (err, count) {
+		if (err) {return next(err)};
+		if (count == 0) {
+			email.headers = _.extend(email.headers || {}, {"X-Sent-To": email.to});
+			transport.sendMail(email, next);
+		} else {
+			return next('The email address "' + email.to + '" has been locked, and email can not be sent to it. Please contact an administrator for help.');
+		};
+	});	
+}
 
 exports.sendMail = function (email, next) {
-	transport.sendMail(email, next);	
+	sendMail (email, next);
 };
 
 exports.sendPasswordResetEmail = function (to, resetID, next) {
-	transport.sendMail({
+	sendMail({
 		to: to,
 		from: GLOBAL.supportEmail,
 		subject: 'Password Reset',
@@ -29,8 +57,7 @@ exports.sendPasswordResetEmail = function (to, resetID, next) {
 };
 
 exports.sendVerificationEmail = function (user, next) {
-  var mailer = require('../config/mailer');
-  mailer.sendMail({
+  sendMail({
     to: user.email,
     from: GLOBAL.supportEmail,
     subject: 'Email Verification',
@@ -44,7 +71,7 @@ exports.sendSiteApprovedEmail = function (dataOwner, site, next) {
 	emailString += '<p>Thank you,<br>The ' + GLOBAL.SiteName + ' Administrators<br>';
 	emailString += '<a href="' + GLOBAL.SiteURL + '/">' + GLOBAL.SiteURL + '/</a></p>';
 
-	transport.sendMail({
+	sendMail({
 		to: dataOwner.email,
 		from: 'The ' + GLOBAL.SiteName + ' Administrators <' + GLOBAL.supportEmail + '>',
 		subject: GLOBAL.SiteName + ' Submitted Place Approved!',
@@ -64,7 +91,7 @@ exports.sendSiteSentBackEmail = function (dataOwner, site, next) {
 	emailString += '<p>Thank you,<br>The ' + GLOBAL.SiteName + ' Administrators<br>';
 	emailString += '<a href="' + GLOBAL.SiteURL + '/">' + GLOBAL.SiteURL + '/</a></p>';
 
-	transport.sendMail({
+	sendMail({
 		to: dataOwner.email,
 		from: 'The ' + GLOBAL.SiteName + ' Administrators <' + GLOBAL.supportEmail + '>',
 		subject: GLOBAL.SiteName + ' Submitted Place Sent Back to You',
@@ -103,7 +130,7 @@ exports.sendModDailyDigestEmail = function (mods, todaysStats, olderStats) {
 		var throttleSpeed = 1000;
 
 		throttleLoop(mods, throttleSpeed, 0, function (mod) {
-			transport.sendMail({
+			sendMail({
 				to: mod.email,
 				from: 'The ' + GLOBAL.SiteName + ' Administrators <' + GLOBAL.supportEmail + '>',
 				subject: GLOBAL.SiteName + ' Daily Moderator Report',
