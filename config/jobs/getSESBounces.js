@@ -9,7 +9,7 @@ var User = mongoose.model( 'User' );
 var rule = new schedule.RecurrenceRule();
 
 //rule.second = [0, 30];
-rule.hour.0; //run at midnight
+rule.hour = 0; //run at midnight
 
 var AWS = require('aws-sdk'); 
 var config = new AWS.Config({
