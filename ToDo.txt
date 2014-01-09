@@ -26,7 +26,7 @@ Send email to user when content approved
 **System Delete Items (After 30 days)
 
 //Possible//
-Anti-virus - REALLY Slow
+**Anti-virus - REALLY Slow
 
 
 //AWS//
