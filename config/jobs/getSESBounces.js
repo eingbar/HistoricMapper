@@ -62,10 +62,11 @@ function processBounceMessages () {
 						bouncedRecipient.timestamp = messageContent.bounce.timestamp;
 						bouncedRecipient.bounceType = messageContent.bounce.bounceType;
 						bouncedRecipient.bounceSubType = messageContent.bounce.bounceSubType;
-
-						user.emailLocked = true;
-						user.emailLockedReason = JSON.stringify(bouncedRecipient);
-						user.save(function (err) { });						
+						if (bouncedRecipient.bounceType = "Permanent") {
+							user.emailLocked = true;
+							user.emailLockedReason = JSON.stringify(bouncedRecipient);
+							user.save(function (err) { });
+						};											
 					});
 				};
 				sqs.deleteMessage({QueueUrl: bounceURL, ReceiptHandle: ReceiptHandle}, function (err, data) {

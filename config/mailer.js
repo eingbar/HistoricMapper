@@ -22,7 +22,7 @@ var transport = nodemailer.createTransport("SES", {
 // 	subject: 'Tesst',
 // 	html: 'test'
 // }, function (err, response) {
-// 	if(error){
+// 	if(err){
 //         console.log(error);
 //     }else{
 //         console.log("Message sent: " + response.message);
