@@ -1,0 +1,78 @@
+<% include ../head %>
+
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Account Signup</h3>
+	</div>
+	<form id="signup" method="post" action="/user/signup" autocomplete="on">
+    	<div class="row">
+    		<div class="col-md-12">
+		    	<div class="row">
+		    		<div class="form-group col-md-3">
+		    			<label class="control-label" for="firstName">First Name:</label> 
+		    			<input class="form-control" type="text" id="firstName" value="<%=model.firstName || ''%>" name="firstName"/>
+		    		</div>
+		    		<div class="form-group col-md-3">
+		    			<label class="control-label" for="lastName">Last Name:</label> 
+		    			<input class="form-control" type="text" id="lastName" value="<%=model.lastName || ''%>" name="lastName"/>
+		    		</div>
+		    	</div>
+				<div class="row">
+		    		<div class="form-group col-md-6">
+		    			<label class="control-label" for="email">Email Address (Will also be your login):</label> 
+		    			<input class="form-control" type="text" id="email" value="<%=model.email || ''%>" name="email"/>
+		    		</div>
+		    	</div>
+		    	<div class="row">
+		    		<div class="form-group col-md-3">
+		    			<label class="control-label" for="screenName">Screen Name (Displayed to others):</label> 
+		    			<input class="form-control" type="text" id="screenName" value="<%=model.screenName || ''%>" name="screenName"/>
+		    		</div>
+		    	</div>
+		    	<div class="row">
+		    		<div class="form-group col-md-3">
+		    			<label class="control-label" for="password">Password:</label> 
+		    			<input class="form-control" type="password" id="password" name="password"/>
+		    		</div>
+		    		<div class="form-group col-md-3">
+		    			<label class="control-label" for="confirmPassword">Confirm Password:</label> 
+		    			<input class="form-control" type="password" id="confirmPassword" name="confirmPassword"/>
+		    		</div>
+		    	</div>
+    		</div>
+    	</div>    	       
+        <div style="margin-top:15px;" class="row col-md-12">
+        	<input class="btn btn-primary" type="submit" value="Register Account"/>        	
+        </div>
+    </form>
+</div>
+<% include ../jqueryScripts %>
+<script>
+	$("#signup").validate({
+		rules: {
+			firstName: {required: true},
+			lastName: {required: true},
+			email: {
+				email: true,
+				required: true,
+				remote: "/user/checkDB"
+			},
+			screenName: {
+				required: true,
+				minlength: 4,
+				remote: "/user/checkDB"			
+			},
+			password: {required: true},
+			confirmPassword: {equalTo: '#password'}
+		},
+		messages: {
+			email: {
+				remote: "That email address is already registered."
+			},
+			screenName: {
+				remote: "That screen name is already registered."
+			}
+		}
+	});
+</script>
+<% include ../footer %>

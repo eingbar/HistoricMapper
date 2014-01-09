@@ -1,0 +1,51 @@
+<% include ../head %>
+
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Upload Document</h3>
+	</div>	
+	<div class="row col-md-12">
+    	<form method="post" role="form" id="uploadFile" enctype="multipart/form-data">
+    		<div class="row col-md-12">
+    			Information about what is accepted goes here. TODO
+    		</div>
+    		<br>
+			<div class="row">
+				<div class="form-group col-md-5">
+					<label for="Name">File</label>
+					<div>Click browse and select the file you wish to upload.</div> 
+					<input class="" type="file" name="Name"/>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-5">
+					<label for="Name">Caption</label> 
+					<textarea class="form-control" name="Caption"></textarea>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-5">
+					<label for="Name">Credit / Source</label> 
+					<textarea class="form-control" name="Credit"></textarea>
+				</div>
+			</div>
+			<div class="row col-md-12">
+    			<a href="#" class="btn">Cancel</a>
+				<button type="submit" class="btn btn-primary">Upload Document</button>
+    		</div>   
+    	</form>
+	</div>
+</div>
+<% include ../jqueryScripts %>
+<script>
+	$("#uploadFile").validate({
+		rules: {
+			Name: 'required',
+			Credit: 'required',
+			Caption: 'required',
+		},
+		messages: {
+		}
+	});
+</script>
+<% include ../footer %>

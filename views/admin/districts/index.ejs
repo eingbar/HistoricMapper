@@ -1,0 +1,39 @@
+<% include ../../head %>
+
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Manage Historic Districts</h3>
+	</div>	
+	<div class="row col-md-12">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Name</th>
+					<th>Obsolete</th>
+				</tr>
+			</thead>
+			<tbody>
+				<%for (var i = 0; i < model.length; i++) {
+					var item = model[i];
+				%>				
+					<tr>
+						<td><a href="/admin/districts/edit/<%=item._id%>" class="btn btn-primary">Edit District</a></td>
+						<td><%=item.Name%></td>
+						<td><%if (item.Obsolete) {%>Yes<%} else {%>No<%};%></td>
+					</tr>
+				<%};%>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<a href="/admin/districts/create/" class="btn btn-primary">Create New District</a>		
+		</div>
+	</div>
+</div>
+<% include ../../jqueryScripts %>
+<% include ../../leafletScripts %>
+<script src="/javascripts/geomEditor.js"></script>
+<% include ../../footer %>

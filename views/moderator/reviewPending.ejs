@@ -1,0 +1,100 @@
+<% include ../head %>
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Review Pending Approvals</h3>
+	</div>	
+    
+    <div class="row col-md-12" style="padding-left: 0px; padding-right: 0px;">
+	    <table class="table">
+	    	<thead>
+	    		<tr>
+	    			<th>Type</th>
+	    			<th>Description</th>
+	    			<th>Commands</th>
+	    		</tr>
+	    	</thead>
+	    	<tbody>
+	    		<% for (var i=0; i < model.length;i++) { var item = model[i]; %>
+	    			<tr>
+	    				<td><%= item.Type %></td>
+	    				<td><%= item.Description %></td>
+	    				<td>
+	    					<%if (item.Type == "Suggestion") {%>
+								<div class="btn-group">
+									<a href="/sites/details/<%= item.SiteID %>" class="btn btn-primary">Goto Place</a>
+									<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+										<span class="caret"></span>
+										<span class="sr-only">Toggle Dropdown</span>
+									</button>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="/moderator/content/approve/<%=item._id%>/Suggestion/<%=item._id%>">Accept</a></li>
+										<li><a href="/moderator/content/reject/<%=item._id%>/Suggestion/<%=item._id%>">Reject</a></li>
+									</ul>
+								</div>	
+	    					<%} else {%>
+	    						<a href="/sites/details/<%= item.SiteID %>" class="btn btn-primary">Goto Place</a>
+	    					<%}%>
+    					</td>
+	    			</tr>
+				<% } %>
+	    	</tbody>
+	    </table>
+    </div>
+</div>
+<% include ../jqueryScripts %>
+<% include ../leafletScripts %>
+<script>
+
+	var DocumentSchema = function (document) {
+		var self = this;
+		self.DocumentType = ko.observable(document.DocumentType);
+		self.Name = ko.observable(document.Name);
+		self.Caption = ko.observable(document.Caption);
+		self.Approved = ko.observable(document.Approved);
+		self.URL = ko.observable(document.URL);
+	}
+
+	var PendingApprovals = function(model) {
+		var self = this;
+	    self.Name = ko.observable(site.Name);
+	    self.Address = ko.observable(site.Address);
+	    self.RegistrationNum = ko.observable(site.RegistrationNum);
+	    self.Description = ko.observable(site.Description);
+	    self.loc = ko.observable(site.loc);
+	    self.Keywords = ko.observableArray(site.Keywords);
+	    // self.Images = ko.observableArray();
+	    self.Files = ko.observableArray();	    
+
+	    // for (var i=0; i < site.Images.length;i++) {
+	    // 	self.Images.push(new ImageSchema(site.Images[i]));
+	    // };
+	    
+	    for (var i=0; i < model.Files.length;i++) {
+	    	self.Files.push(new DocumentSchema(site.Files[i]));
+	    };
+
+    	self.submitForm = function() {
+		    var saveSuccess = false;
+		    // viewModel.saveFailed(false);
+
+			jQuery.ajax({
+				type: "POST",
+				//url: "@Url.Action("MyAction", "MyController")",
+				data: ko.toJSON(self),
+				dataType: "json",
+				contentType: "application/json",
+				success: function(returnedData) {
+					saveSuccess = returnedData.Success || false;
+					// viewModel.saveFailed(!saveSuccess);
+				},
+				async: false
+			});     
+			return saveSuccess;
+		}  	
+	};
+	/*ko.applyBindings(new PendingApprovals(*/
+		<%/*-*/ /*JSON.stringify(model)*/ %>
+	/*));*/
+</script>
+<script src="/javascripts/geomEditor.js"></script>
+<% include ../footer %>

@@ -1,0 +1,39 @@
+Todo: 
+
+//App//
+**Admin Show Deleted Items
+**Admin Undelete Deleted Items
+
+**Admin Reset Password (reset -> send email to user)
+**Admin Delete User
+
+**User Forgot Password
+**User Edit My Details/change password
+
+//Emails//
+**Add Internal Notes (Only visable on Edit Screen)
+**Add Metadata fields to Edit Screen
+
+Moderator email daily digest
+*	Email has listing of new Request types
+*	Email has listing of existing (older than 1 day) Request types
+Send email to user when content approved
+*	APPROVED! Email with link to place
+*	REJECTED! Email with link and Notes (if any entered)
+**Moderator remove/subscribe themselves from/to the daily digest
+
+//System//
+**System Delete Items (After 30 days)
+
+//Possible//
+Anti-virus - REALLY Slow
+
+
+//AWS//
+Setup account with consolidated billing
+Set up instance
+Set up SES (email services)
+Set up DNS
+Point Domain Name Servers at AWS
+
+

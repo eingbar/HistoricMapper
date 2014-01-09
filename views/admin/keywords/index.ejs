@@ -1,0 +1,51 @@
+<% include ../../head %>
+
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Manage System Keywords</h3>
+	</div>	
+	<div class="row col-md-12">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Keyword</th>
+					<th>Obsolete</th>
+				</tr>
+			</thead>
+			<tbody>
+				<%for (var i = 0; i < model.length; i++) {
+					var keyword = model[i];
+				%>				
+					<tr>
+						<td><a href="/admin/keywords/edit/<%=keyword._id%>" class="btn btn-primary">Edit Keyword</a></td>
+						<td><%=keyword.Text%></td>
+						<td><%if (keyword.Obsolete) {%>Yes<%} else {%>No<%};%></td>
+					</tr>
+				<%};%>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<form action="/admin/keywords/create/" method="post" role="form" id="createKeyword" class="form-inline">
+				<div class="row">
+					<div class="col-md-3 form-group"><label for="Text" class="sr-only">Keyword Text</label><input type="text" name="Text" id="Text" placeholder="New Keyword..." class="form-control"></div>
+					<div class="col-md-3 form-group"><button name="submitValue" type="submit" class="btn btn-primary" value="Create New Keyword">Create New Keyword</button></div>
+				</div>				
+			</form>			
+		</div>
+	</div>
+</div>
+<% include ../../jqueryScripts %>
+<script>
+	$("#createKeyword").validate({
+		rules: {
+			Text: 'required'
+		},
+		messages: {
+		}
+	});
+</script>
+<% include ../../footer %>

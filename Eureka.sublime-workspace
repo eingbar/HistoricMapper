@@ -1,0 +1,528 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"for",
+				"for	for (…) {…}"
+			],
+			[
+				"ta",
+				"thead	Tag"
+			],
+			[
+				"h",
+				"href	Attr"
+			],
+			[
+				"su",
+				"submitForm"
+			],
+			[
+				"User",
+				"UserSchema"
+			],
+			[
+				"new",
+				"newKeyword"
+			],
+			[
+				"fun",
+				"fun	Function"
+			],
+			[
+				"a",
+				"action	Attr"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "app.js",
+			"settings":
+			{
+				"buffer_size": 3489,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "Calculated euclidian distance grid using this feature class 30 m cells using GAP data as analysis environment\nReclassified this grid in to 5 classes\n1 <250m\n2 250-500\n3 500-1000\n4 1000-2000\n5 2000-4000\n6 > 4000\n\nWeightings for very rough analysis:\n0 - 250 = 50\n250 - 500 = 25\n500 - 1000 = 12\n1000 - infinty = 0\n\n\nPerennial water\nSame process as for streams to create distance grid and then reclassified grid. Not used in this very rough analysis.\n\n\nSlope degrees -- from BLM, reprojected.\nWeightings:\nReclassified directly to weight values:\n0-5 = 50\n5-10 = 25\n10-25 = 12\n>20 degrees = 0\n\n\nDTW:\nWeightings for very rough analysis:\n0 - 250 = 50\n250 - 500 = 25\n500 - 1000 = 12\n1000 - infinty = 0",
+			"settings":
+			{
+				"buffer_size": 692,
+				"line_ending": "Windows",
+				"name": "Calculated euclidian distance grid using this feat"
+			}
+		},
+		{
+			"file": "views/sites/create.ejs",
+			"settings":
+			{
+				"buffer_size": 4336,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "views/sites/edit.ejs",
+			"settings":
+			{
+				"buffer_size": 5209,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "routes/sites.js",
+			"settings":
+			{
+				"buffer_size": 5222,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "views/head.ejs",
+			"settings":
+			{
+				"buffer_size": 6206,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "views/sites/index.ejs",
+			"settings":
+			{
+				"buffer_size": 804,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "views/sites/details.ejs",
+			"settings":
+			{
+				"buffer_size": 2750,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/D/Adam/Desktop/Eureka/app.js",
+		"/D/Adam/Desktop/Eureka/views/500.ejs",
+		"/D/Adam/Desktop/Eureka/routes/index.js",
+		"/D/Adam/Desktop/Eureka/routes/moderator.js",
+		"/D/Adam/Desktop/Eureka/views/head.ejs",
+		"/D/Adam/Desktop/Eureka/views/user/login.ejs",
+		"/D/Adam/Desktop/Eureka/routes/user.js",
+		"/D/Adam/Desktop/Eureka/views/footer.ejs",
+		"/D/Adam/Desktop/Eureka/config/middleware/authorization.js",
+		"/C/Users/Adam/AppData/Roaming/Sublime Text 3/Packages/Default/Default (Windows).sublime-keymap",
+		"/D/Adam/Desktop/Eureka/Eureka.sublime-project",
+		"/D/Adam/Desktop/Eureka/schemas/HistoricSiteSchema.js",
+		"/D/Adam/Desktop/Eureka/Gruntfile.js",
+		"/D/Adam/Desktop/Eureka/routes/sites.js",
+		"/D/Adam/Desktop/Eureka/views/user/signup.ejs",
+		"/D/Adam/Desktop/Eureka/config/passport.js",
+		"/D/Adam/Desktop/Eureka/node_modules/passport/lib/passport/index.js",
+		"/D/Adam/Desktop/Eureka/schemas/UserSchema.js",
+		"/D/Adam/Desktop/Eureka/node_modules/passport/lib/passport/http/request.js",
+		"/D/Adam/Desktop/Eureka/db.js",
+		"/D/Adam/Desktop/Eureka/package.json",
+		"/D/Adam/Desktop/Eureka/views/leafletScripts.ejs",
+		"/D/Adam/Desktop/Eureka/views/index/index.ejs",
+		"/D/Adam/Desktop/Eureka/views/sites/create.ejs",
+		"/D/Adam/Desktop/Eureka/views/jqueryScripts.ejs",
+		"/D/Adam/Desktop/Eureka/public/javascripts/geomEditor.js",
+		"/D/Adam/Desktop/Eureka/util/hash.js",
+		"/D/Adam/Desktop/Eureka/public/javascripts/knockout-3.0.0.js",
+		"/D/Adam/Desktop/Eureka/public/javascripts/esri-leaflet-src.js",
+		"/D/Adam/Desktop/Eureka/views/sites/index.ejs",
+		"/D/Adam/Desktop/Eureka/views/sites/list.ejs",
+		"/D/Adam/Desktop/ExpressTest/SocialMapper/app.js",
+		"/D/Adam/Desktop/Eureka/views/index.ejs",
+		"/D/Eureka/Gruntfile.js",
+		"/D/Eureka/node_modules/node-inspector/node_modules/socket.io/node_modules/socket.io-client/node_modules/uglify-js/tmp/app.js"
+	],
+	"find":
+	{
+		"height": 36.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"site.",
+			"config",
+			"self",
+			"places",
+			"HistoricSite",
+			"GeekPlace",
+			"places",
+			"GeekPlace"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"model.",
+			"model",
+			"sites",
+			"HistoricSiteSchema",
+			"HistoricSite",
+			"sites",
+			"HistoricSite"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "app.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3489,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1593,
+								1593
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 900.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 692,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								692,
+								692
+							]
+						],
+						"settings":
+						{
+							"auto_name": "Calculated euclidian distance grid using this feat",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 513.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "views/sites/create.ejs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4336,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2613,
+								2613
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 840.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "views/sites/edit.ejs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5209,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2664,
+								2664
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 920.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "routes/sites.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5222,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2548,
+								2548
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "views/head.ejs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6206,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4627,
+								4627
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1020.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "views/sites/index.ejs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 804,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								804,
+								750
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "views/sites/details.ejs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2750,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1612,
+								1551
+							]
+						],
+						"settings":
+						{
+							"auto_name": "",
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 540.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 36.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"project": "Eureka.sublime-project",
+	"replace":
+	{
+		"height": 66.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"",
+				"Gruntfile.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 194.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

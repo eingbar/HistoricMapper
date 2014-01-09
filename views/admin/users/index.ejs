@@ -1,0 +1,40 @@
+<% include ../../head %>
+
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Manage System Users</h3>
+	</div>
+	<div class="row col-md-12">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Screen Name</th>
+					<th>First/Last Name</th>
+					<th>Email</th>
+					<th>User Level</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% for (var i = 0; i < model.length; i++) {
+					var user = model[i]; %>
+					<tr>
+						<td><a href="/admin/users/edit/<%=user._id%>" class="btn btn-primary">Edit User</a></td>
+						<td><%= user.screenName %></td>
+						<td><%=user.firstName%> <%=user.lastName%></td>
+						<td><%=user.email%></td>
+						<td>
+							<% if (user.userLevel == 0) {%>Contributor<%} %>
+							<% if (user.userLevel == 50) {%>Moderator<%} %>
+							<% if (user.userLevel == 100) {%>Administrator<%} %>
+						</td>
+					</tr>
+				<% } %>
+			</tbody>
+		</table>
+	</div>
+</div>
+<% include ../../jqueryScripts %>
+<% include ../../leafletScripts %>
+<script src="/javascripts/geomEditor.js"></script>
+<% include ../../footer %>

@@ -1,0 +1,116 @@
+<% include ../../head %>
+
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Edit User</h3>
+	</div>
+	<div class="row col-md-12">
+		<form action="" id="editUser" method="post" role="form">
+			<div class="row">
+				<div class="col-md-3 form-group"><label for="firstName">First Name</label><input type="text" name="firstName" id="firstName" class="form-control" value="<%=model.firstName%>"></div>
+				<div class="col-md-3 form-group"><label for="lastName">Last Name</label><input type="text" name="lastName" id="lastName" class="form-control" value="<%=model.lastName%>"></div>
+				<div class="col-md-3 form-group">
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="ModDailyDigest" id="ModDailyDigest1" value="true" <% if (model.ModDailyDigest) {%>checked<%} %>>
+					    Subscribed to moderator digest
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="ModDailyDigest" id="ModDailyDigest2" value="false" <% if (!model.ModDailyDigest) {%>checked<%} %>>
+					    Not subscribed to moderator digest
+					  </label>
+					</div>				
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3 form-group"><label for="email">Email Address</label><input type="text" name="email" id="email" class="form-control" value="<%=model.email%>"><input type="hidden" id="existingEmail" value="<%=model.email%>"></div>
+				<div class="col-md-3 form-group"><label for="screenName">Screen Name</label><input type="text" name="screenName" id="screenName" class="form-control" value="<%=model.screenName%>"><input type="hidden" id="existingScreenName" value="<%=model.screenName%>"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-2 form-group">
+					<label for="userLevel">User Level</label>
+					<select name="userLevel" id="userLevel" class="form-control">
+						<option value="0" <% if (model.userLevel == 0) {%>selected<%} %>>Contributor</option>
+						<option value="50" <% if (model.userLevel == 50) {%>selected<%} %>>Moderator</option>
+						<option value="100" <% if (model.userLevel == 100) {%>selected<%} %>>Administrator</option>
+					</select>
+				</div>
+				<div class="col-md-3 form-group">
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="approved" id="approved1" value="true" <% if (model.approved) {%>checked<%} %>>
+					    Approved (Can Login)
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="approved" id="approved2" value="false" <% if (!model.approved) {%>checked<%} %>>
+					    Not Approved (Can Not Login)
+					  </label>
+					</div>				
+				</div>
+				<div class="row col-md-4">
+					<button name="SubmitValue" type="submit" value="ResetPassword" class="btn btn-warning">Reset Users Password</button>
+					<button name="SubmitValue" type="submit" value="DeleteUser" class="btn btn-danger">Delete User</button>
+				</div>
+			</div>
+			
+			<div class="row col-md-12">
+				<a href="/admin/users/">Back to List</a>
+				<button name="SubmitValue" type="submit" value="SaveUser" class="btn btn-primary">Save User</button>
+				<input type="hidden" name="submitValue" id="submitValue">
+			</div>			
+		</form>
+	</div>
+</div>
+<% include ../../jqueryScripts %>
+<script>
+	$("#editUser").validate({
+		rules: {
+			firstName: {required: true},
+			lastName: {required: true},
+			email: {
+				email: true,
+				required: true,
+				remote: {url: "/user/checkDB", data: { existing: $("#existingEmail").val() }, async:false}
+			},
+			screenName: {
+				required: true,
+				minlength: 4,
+				remote: {url: "/user/checkDB", data: { existing: $("#existingEmail").val() }, async:false}
+			},
+			password: {required: true},
+			confirmPassword: {equalTo: '#password'}
+		},
+		messages: {
+			email: {
+				remote: "That email address is already registered."
+			},
+			screenName: {
+				remote: "That screen name is already registered."
+			}
+		}
+	});
+	$( "#editUser" ).submit(function( event ) {		
+		var submitVal = $("button[type=submit][clicked=true]").text();
+
+		if (submitVal == 'Delete User') {
+			$("button[type=submit][clicked=true]").addClass('btn-striped');
+			$("button[type=submit][clicked=true]").text('Really Delete User??');
+			event.preventDefault();
+			return false;
+		} else if (submitVal == 'Really Delete User??') {
+			$("button[type=submit][clicked=true]").text('Delete User');			
+			$("button[type=submit][clicked=true]").removeClass('btn-striped');
+		};
+		$("#submitValue").val($("button[type=submit][clicked=true]").val());
+	});
+
+	$("form button[type=submit]").click(function() {
+	    $("button[type=submit]", $(this).parents("form")).removeAttr("clicked");
+	    $(this).attr("clicked", "true");
+	});	
+</script>
+<% include ../../footer %>

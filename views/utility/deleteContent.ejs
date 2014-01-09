@@ -1,0 +1,34 @@
+<% include ../head %>
+
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Are you sure you want to delete this <%= String(contentType).toLowerCase() %>?</h3>
+	</div>	
+	<div class="row">
+    	<form method="post" role="form">
+    		<div class="row col-md-12">
+				<div class="well">
+					<%if (contentType == 'Image') {%>
+						<figure class="thumbnail" style="max-width: 400px">
+							<img class="" src="<%=URL%>">
+							<figcaption style="font-size: 8pt;"><%=content%> (Credit: <%=credit%>)</figcaption>
+						</figure>
+					<%}
+					else if (contentType == 'Document') {%>
+						<a target="_blank" href="<%=URL%>"><%=content%></a> (Credit: <%=credit%>)
+					<%}
+					else if (contentType == 'Comment') {%>
+						<%=content%>
+					<%};%>
+
+				</div>
+    		</div>
+    		<div class="row col-md-12">
+    			<a href="javascript:history.back()" class="btn btn-primary">Cancel</a>
+				<button type="submit" class="btn btn-danger">Delete <%= contentType %></button>
+    		</div>    		
+    	</form>   		
+	</div>
+</div>
+<% include ../jqueryScripts %>
+<% include ../footer %>

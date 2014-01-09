@@ -1,0 +1,185 @@
+<% include ../head %>
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Create New Place</h3>
+	</div>	
+    <form method="post" id="createSite" role="form">
+    	<div class="row">
+    		<div class="col-md-6">
+				<div class="row">
+		    		<div class="form-group col-md-12">
+		    			<label for="Name">Name</label> 
+		    			<input class="form-control" data-bind="value: Name" type="text" name="Name"/>
+		    		</div>
+		    	</div>
+		    	<div class="row">
+		    		<div class="form-group col-md-12">
+		    			<label for="Address">Address</label> 
+		    			<input class="form-control" data-bind="value: Address" type="text" name="Address"/>
+		    		</div>
+		    	</div>
+				<div class="row">
+		    		<div class="form-group col-md-12">
+		    			<label for="Description">Description</label> 
+		    			<textarea style="height: 190px" data-bind="value: Description" class="form-control" name="Description"></textarea>
+		    		</div>
+		    	</div>
+		    	<div class="row">
+		    		<div class="form-group col-md-12">
+		    			<label>Keywords:</label>
+		    			<!-- ko if: (Keywords().length == 0) -->
+							<i>No Keywords Entered Yet</i>
+						<!-- /ko -->
+						<!-- ko foreach: Keywords() -->
+							<span class="label label-primary"><span data-bind="text: $data"></span> <input class="hiddenFormInput" type="textbox" data-bind="value: $data, attr:{id: 'Keywords[' + $index() + ']', name: 'Keywords[' + $index() + ']'}"> <a href='#' data-bind='click: $root.removeKeyword'>[x]</a></span>
+						<!-- /ko -->
+		    			<!-- <ul data-bind="foreach: Keywords()">
+		    				<li><span data-bind="text: $data"></span> <a href='#' data-bind='click: $root.removeKeyword'>[x]</a></li>
+		    			</ul> -->
+		    		</div>
+		    	</div>
+		    	<div class="form-group row">
+		    		<div class="col-md-6">
+		    			<select class="form-control" id="newKeyword">
+		    				<option value=""></option>
+		    				<%for (var i = 0; i < keywords.length; i++) {
+		    					var item = keywords[i];
+		    				%>
+		    					<option value="<%=item.Text%>"><%=item.Text%></option>
+		    				<%};%>
+		    			</select>
+		    		</div>
+		    		<div class="col-md-6">
+		    			<button type="button" class="btn btn-success" data-bind="click: addKeyword">Add Keyword</button>
+		    		</div>
+		    	</div>
+				<div class="row">
+		    		<div class="form-group col-md-12">
+		    			<label>Tours:</label>
+		    			<!-- ko if: (Tours().length == 0) -->
+							<i>No Tours Entered Yet</i>
+						<!-- /ko -->
+						<!-- ko foreach: Tours() -->
+							<span class="label label-info"><span data-bind="text: $data"></span> <input class="hiddenFormInput" type="textbox" data-bind="value: $data, attr:{id: 'Tours[' + $index() + ']', name: 'Tours[' + $index() + ']'}"> <a href='#' data-bind='click: $root.removeTour'>[x]</a></span>
+						<!-- /ko -->
+		    			<!-- <ul data-bind="foreach: Tours()">
+		    				<li><span data-bind="text: $data"></span> <a href='#' data-bind='click: $root.removeTour'>[x]</a></li>
+		    			</ul> -->
+		    		</div>
+		    	</div>
+		    	<div class="form-group row">
+		    		<div class="col-md-6">
+		    			<select class="form-control" id="newTour">
+		    				<option value=""></option>
+		    				<%for (var i = 0; i < tours.length; i++) {
+		    					var item = tours[i];
+		    				%>
+		    					<option value="<%=item.Text%>"><%=item.Text%></option>
+		    				<%};%>
+		    			</select>
+		    		</div>
+		    		<div class="col-md-6">
+		    			<button type="button" class="btn btn-success" data-bind="click: addTour">Add Tour</button>
+		    		</div>
+		    	</div>
+		    	<div class="row">
+		    		<div class="form-group col-md-12">
+		    			<label for="RegistrationNum">National, State, Local ID Numbers</label> 
+		    			<input class="form-control" data-bind="value: RegistrationNum" type="text" name="RegistrationNum"/>
+		    		</div>
+		    	</div>
+    		</div>
+    		<div class="col-md-6">
+    			<div class="row col-md-12">
+    				<label>Location</label> 
+    				<input type="text" data-bind="value: loc" name="loc" id="loc" class="editor-for-dbgeography hiddenFormInput" />
+				</div>
+    		</div>
+    	</div>    	       
+        <div style="margin-top:15px;" class="row col-md-12">
+        	<input class="btn btn-info" type="button" data-bind="click: function() {window.location = '/';}" value="Cancel"/>
+        	<input class="btn btn-success pull-right" type="submit" value="Next"/>
+        </div>
+    </form>
+</div>
+<% include ../jqueryScripts %>
+<% include ../leafletScripts %>
+<script>
+	$("#createSite").validate({
+		rules: {
+			// Name: 'required',
+			loc: 'required',
+			Address: 'required',
+			// Description: 'required'
+		},
+		messages: {
+		}
+	});
+	
+	var HistoricSite = function(site) {
+		var self = this;
+	    self.Name = ko.observable(site.Name);
+	    self.Address = ko.observable(site.Address);
+	    self.RegistrationNum = ko.observable(site.RegistrationNum);
+	    self.Description = ko.observable(site.Description);
+	    self.loc = ko.observable(site.loc);
+	    self.Keywords = ko.observableArray(site.Keywords);
+	    self.Tours = ko.observableArray(site.Tours);
+
+	    self.addKeyword = function () {
+	    	var newKeyword = $('#newKeyword').val();
+	    	if (newKeyword) {self.Keywords.push(newKeyword);};	    	
+	    	$('#newKeyword').val('');
+	    }
+
+	    self.removeKeyword = function(keyword) {
+        	$.each(self.Keywords(), function() { self.Keywords.remove(keyword) });
+    	};
+
+    	self.addTour = function () {
+	    	var newTour = $('#newTour').val();
+	    	if (newTour) {self.Tours.push(newTour);};	    	
+	    	$('#newTour').val('');
+	    }
+
+	    self.removeTour = function(tour) {
+        	$.each(self.Tours(), function() { self.Tours.remove(tour) });
+    	};
+
+  //   	self.submitForm = function() {
+		//     var saveSuccess = false;
+		//     // viewModel.saveFailed(false);
+
+		// 	jQuery.ajax({
+		// 		type: "POST",
+		// 		//url: "@Url.Action("MyAction", "MyController")",
+		// 		data: ko.toJSON(self),
+		// 		dataType: "json",
+		// 		contentType: "application/json",
+		// 		success: function(returnedData) {
+		// 			saveSuccess = returnedData.Success || false;
+		// 			// viewModel.saveFailed(!saveSuccess);
+		// 		},
+		// 		async: false
+		// 	});     
+		// 	return saveSuccess;
+		// }
+
+		$('#newKeyword').keypress(function(event){
+			if (event.keyCode == 10 || event.keyCode == 13) {
+				self.addKeyword();
+				event.preventDefault();
+			}
+		});  
+
+		$('#newTour').keypress(function(event){
+			if (event.keyCode == 10 || event.keyCode == 13) {
+				self.addKeyword();
+				event.preventDefault();
+			}
+		});   	
+	};
+	ko.applyBindings(new HistoricSite(<%- JSON.stringify(model) %>));
+</script>
+<script src="/javascripts/geomEditor.js"></script>
+<% include ../footer %>

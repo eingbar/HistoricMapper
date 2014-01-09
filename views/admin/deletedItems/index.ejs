@@ -1,0 +1,55 @@
+<% include ../../head %>
+
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Manage Deleted Items</h3>
+	</div>	
+	<div class="row col-md-12">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th style="width: 150px;"></th>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Deleted By</th>
+					<th>Keep Until</th>
+				</tr>
+			</thead>
+			<tbody>
+				<%for (var i = 0; i < model.length; i++) {
+					var item = model[i];
+				%>				
+					<tr>
+						<td>
+							<div class="btn-group">
+								<a href="/sites/edit/<%= item.SiteID %>" class="btn btn-primary">Edit Place</a>
+								<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+									<span class="caret"></span>
+									<span class="sr-only">Toggle Dropdown</span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="/admin/deleteditems/undo/<%=item._id%>/">Undo Delete</a></li>
+									<li><a data-id="<%=item._id%>" class="reallyDeleteItem" href="#">Do Final Delete (Not Reversible)</a></li>
+								</ul>
+							</div>
+						</td>
+						<td><%=item.Text%></td>
+						<td><%=item.Type%></td>
+						<td><%=item.UserName%></td>
+						<td><%=item.KeepUntil%></td>
+					</tr>
+				<%};%>
+			</tbody>
+		</table>
+	</div>
+</div>
+<% include ../../jqueryScripts %>
+<script>
+	$(".reallyDeleteItem").click(function (e) {
+		var r=confirm("Are you really sure? This action is not reversible.");
+		var id = $(this).attr("data-id");
+		if (r) {window.location = '/admin/deleteditems/delete/' + id};
+		e.preventDefault();
+	});
+</script>
+<% include ../../footer %>

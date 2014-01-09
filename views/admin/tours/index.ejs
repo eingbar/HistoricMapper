@@ -1,0 +1,51 @@
+<% include ../../head %>
+
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Manage System Tours</h3>
+	</div>	
+	<div class="row col-md-12">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Tour</th>
+					<th>Obsolete</th>
+				</tr>
+			</thead>
+			<tbody>
+				<%for (var i = 0; i < model.length; i++) {
+					var tour = model[i];
+				%>				
+					<tr>
+						<td><a href="/admin/tours/edit/<%=tour._id%>" class="btn btn-primary">Edit Tour</a></td>
+						<td><%=tour.Text%></td>
+						<td><%if (tour.Obsolete) {%>Yes<%} else {%>No<%};%></td>
+					</tr>
+				<%};%>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<form action="/admin/tours/create/" method="post" role="form" id="createTour" class="form-inline">
+				<div class="row">
+					<div class="col-md-3 form-group"><label for="Text" class="sr-only">Tour Text</label><input type="text" name="Text" id="Text" placeholder="New Tour..." class="form-control"></div>
+					<div class="col-md-3 form-group"><button name="submitValue" type="submit" class="btn btn-primary" value="Create New Tour">Create New Tour</button></div>
+				</div>				
+			</form>			
+		</div>
+	</div>
+</div>
+<% include ../../jqueryScripts %>
+<script>
+	$("#createTour").validate({
+		rules: {
+			Text: 'required'
+		},
+		messages: {
+		}
+	});
+</script>
+<% include ../../footer %>

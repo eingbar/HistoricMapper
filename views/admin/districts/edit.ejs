@@ -1,0 +1,58 @@
+<% include ../../head %>
+
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Edit District</h3>
+	</div>
+	<div class="row col-md-12">
+		<form action="" id="districtForm" method="post" role="form">
+			<div class="row">
+				<div class="col-md-3 form-group"><label for="Name">District Name</label><input type="text" name="Name" id="Name" class="form-control" value="<%=model.Name%>"></div>
+				<div class="col-md-3">
+					<button name="submitValue" value="DeleteDistrict" type="submit" class="btn btn-danger">Delete District</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<input type="text" value="<%=JSON.stringify(model.loc)%>" data-GISType="polygon" name="loc" class="editor-for-dbgeography hiddenFormInput" />
+				</div>
+			</div>
+			<div class="row col-md-12">
+				<a href="/admin/districts/">Back to List</a>
+				<button name="submitValue" value="SaveDistrict" type="submit" class="btn btn-primary">Save District</button>
+			</div>
+		</form>
+	</div>
+</div>
+<% include ../../jqueryScripts %>
+<% include ../../leafletScripts %>
+<script src="/javascripts/geomEditor.js"></script>
+<script>
+	$("#districtForm").validate({
+		rules: {
+			Name: 'required',
+			loc: 'required'
+		},
+		messages: {
+		}
+	});
+
+	$( "#districtForm" ).submit(function( event ) {
+		
+		var submitVal = $("button[type=submit][clicked=true]").text();
+		if (submitVal == 'Delete District') {
+			$("button[type=submit][clicked=true]").addClass('btn-striped');
+			$("button[type=submit][clicked=true]").text('Really Delete District??');
+			event.preventDefault();
+		} else if (submitVal == 'Really Delete District??') {
+			// $("button[type=submit][clicked=true]").text('Delete Keyword');
+			// $("button[type=submit][clicked=true]").removeClass('btn-striped');
+		};		
+	});
+
+	$("form button[type=submit]").click(function() {
+	    $("button[type=submit]", $(this).parents("form")).removeAttr("clicked");
+	    $(this).attr("clicked", "true");
+	});		
+</script>
+<% include ../../footer %>

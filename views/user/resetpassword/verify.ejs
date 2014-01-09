@@ -1,0 +1,37 @@
+<% include ../../head %>
+
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Password Reset</h3>
+	</div>
+	<form id="reset" method="post" action="" autocomplete="on">
+    	<div class="row">    		
+    		<div class="col-md-12">
+    			<h4>Please enter a new password to complete the password reset process.</h4>
+		    	<div class="row">
+		    		<div class="form-group col-md-3">
+		    			<label class="control-label" for="password">Password:</label> 
+		    			<input class="form-control" type="password" id="password" name="password"/>
+		    		</div>
+		    		<div class="form-group col-md-3">
+		    			<label class="control-label" for="confirmPassword">Confirm Password:</label> 
+		    			<input class="form-control" type="password" id="confirmPassword" name="confirmPassword"/>
+		    		</div>
+		    	</div>
+    		</div>
+    	</div>    	       
+        <div style="margin-top:15px;" class="row col-md-12">
+        	<input class="btn btn-primary" type="submit" value="Reset Password"/>        	
+        </div>
+    </form>
+</div>
+<% include ../../jqueryScripts %>
+<script>
+	$("#reset").validate({
+		rules: {
+			password: {required: true},
+			confirmPassword: {equalTo: '#password'}
+		}
+	});
+</script>
+<% include ../../footer %>

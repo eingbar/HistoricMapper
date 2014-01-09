@@ -1,0 +1,110 @@
+<% include ../head %>
+
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Edit Your User Details</h3>
+	</div>	
+	<div class="row col-md-12">
+    	<form id="editUser" action="" method="post" role="form" autocomplete="off">
+    		<div class="row">
+    			<div class="col-md-6">
+					<div class="row">
+						<div class="form-group col-md-6">
+							<label for="firstName">First Name:</label> 
+							<input class="form-control" value="<%=model.firstName%>" type="text" name="firstName"/>
+						</div>
+						<div class="form-group col-md-6">
+							<label for="lastName">Last Name:</label> 
+							<input class="form-control" value="<%=model.lastName%>" type="text" name="lastName"/>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-md-12">
+							<label for="email">Email Address (Will also be your login) :</label> 
+							<input class="form-control" value="<%=model.email%>" type="text" name="email"/>
+							<input type="hidden" id="existingEmail" value="<%=model.email%>">
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-md-6">
+							<label for="screenName">Screen Name  (Displayed to others):</label> 
+							<input class="form-control" value="<%=model.screenName%>" type="text" name="screenName"/>
+							<input type="hidden" id="existingScreenName" value="<%=model.screenName%>">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 form-group">
+							<div class="radio">
+							  <label>
+							    <input type="radio" name="ModDailyDigest" id="ModDailyDigest1" value="true" <% if (model.ModDailyDigest) {%>checked<%} %>>
+							    Subscribed to moderator digest
+							  </label>
+							</div>
+							<div class="radio">
+							  <label>
+							    <input type="radio" name="ModDailyDigest" id="ModDailyDigest2" value="false" <% if (!model.ModDailyDigest) {%>checked<%} %>>
+							    Not subscribed to moderator digest
+							  </label>
+							</div>				
+						</div>
+					</div>
+				</div>
+				<div class="well col-md-offset-1 col-md-4">
+					<div class="row col-md-12">
+						<h4>Change Password (Optional)</h4>
+					</div>
+					<div class="row col-md-12 form-group">
+						<label for="CurrentPassword">Current Password:</label> 
+						<input class="form-control" type="password" id="currentPassword" name="currentPassword"/>						
+					</div>
+					<div class="row col-md-12 form-group">
+						<label for="NewPassword">New Password:</label> 
+						<input class="form-control" type="password" id="newPassword" name="newPassword"/>
+					</div>
+					<div class="row col-md-12 form-group">
+						<label for="ConfirmNewPassword">Confirm New Password:</label> 
+						<input class="form-control" type="password" id="confirmNewPassword" name="confirmNewPassword"/>
+					</div>
+				</div>				
+			</div>
+	    	<div style="margin-top:15px;" class="row">
+	    		<div class="col-md-6">
+	    			<input class="btn btn-primary" type="submit" value="Save User Details"/>
+	    		</div>	        	
+	        </div>
+    	</form>
+	</div>
+</div>
+<% include ../jqueryScripts %>
+<script>
+	jQuery.validator.addMethod( "oldPasswordPresent", function (value, element, parameters) {
+		return !(value && !$("#currentPassword").val());
+	}, 'Current Password must be filled in to change password.' )
+	$("#editUser").validate({
+		rules: {
+			firstName: {required: true},
+			lastName: {required: true},
+			email: {
+				email: true,
+				required: true,
+				remote: {url: "/user/checkDB", data: { existing: $("#existingEmail").val() }, async:true}
+			},
+			screenName: {
+				required: true,
+				minlength: 4,
+				remote: {url: "/user/checkDB", data: { existing: $("#existingEmail").val() }, async:true}
+			},
+			newPassword: {oldPasswordPresent: true},
+			confirmNewPassword: {equalTo: '#newPassword'}
+		},
+		messages: {
+			email: {
+				remote: "That email address is already registered."
+			},
+			screenName: {
+				remote: "That screen name is already registered."
+			}
+		}
+	});
+</script>
+<% include ../footer %>

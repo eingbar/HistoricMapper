@@ -1,0 +1,9 @@
+<% include head %>
+
+<h2>Error <%=error.status%>: <%= error.description %></h2>
+
+<%= JSON.stringify(error) %>
+
+
+<% include ./jqueryScripts %>
+<% include footer %>

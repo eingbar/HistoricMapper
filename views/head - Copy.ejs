@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= (title || '') %></title>
+    <link rel='stylesheet' href='/stylesheets/output.css' />  
+</head>
+<body>
+<div id="container">
+    <div>
+        <img class="headerGraphic hidden-xs" src="/images/EurekaHeader.png">
+        <div id="header" class="hidden-xs">
+            <div class="container">
+                <img class="logo" src="/images/EurekaLogo.png">
+                <div class="headerTitle">
+                    City of Eureka<br>
+                    <span class="subTitle">Historic Preservation Website</span>
+                </div>
+            </div>
+        </div>
+        <nav class="navbar navbar-default navbar-inverse" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">Eureka History</a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse navbar-ex1-collapse">
+                    <% if(locals.user) { %>
+                    <ul class="nav navbar-nav">
+                        <li class=""><a href="/sites/create">Create New Place</a></li>
+                        <% if(locals.user.userLevel >= 50) { %>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Moderator<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/moderator/review">Reivew Pending Approvals</a></li>
+                            </ul>
+                        </li>
+                        <% } %>
+                        <% if(locals.user.userLevel >= 100) { %>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administrator<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/admin/users/">Manage Users</a></li>                                
+                                <li><a href="/admin/keywords/">Manage Keywords</a></li>
+                                <li><a href="/admin/tours/">Manage Tours</a></li>
+                                <li><a href="/admin/districts/">Manage Historic Districts</a></li>
+                                <li><a href="#">Deleted Items</a></li>
+                            </ul>
+                        </li>
+                        <% } %>
+                    </ul>
+                    <% } %>
+                    <div class="visible-md visible-lg">
+                        <ul class="nav navbar-nav pull-right">
+                            <% if(!locals.user) {%>
+                                <li><a href="/user/login">Login</a></li>
+                            <%} else {%>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= (locals.user ? locals.user.screenName : 'Login') %> <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/user/drafts">My Draft Places</a></li>
+                                    <li><a href="/user/details">Edit My Details</a></li>
+                                    <li><a href="/user/logout">Logout</a></li>
+                                </ul>
+                                
+                            </li>
+                            <%}%>
+                        </ul>
+                        <%if (locals.URLPath  == '/') {%>
+                            <form class="navbar-form navbar-left pull-right" role="search">
+                                <div class="form-group">
+                                    <input type="text" class="form-control searchField" placeholder="Search">
+                                </div>
+                                <button type="button" class="btn btn-default searchBtn">Search</button>
+                            </form> 
+                        <%};%>
+                    </div>
+                    <div class="visible-sm">
+                        <ul class="nav navbar-nav pull-right">
+                            <%if (locals.URLPath  == '/') {%>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Search<b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <form class="navbar-form navbar-left" role="search">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control searchField" placeholder="Search">
+                                                </div>
+                                                <button type="button" class="btn btn-default searchBtn">Search</button>
+                                            </form>                                    
+                                        </li>
+                                    </ul>
+                                </li>
+                            <%};%>
+                            <% if(!locals.user) {%>
+                                <li><a href="/user/login">Login</a></li>
+                            <%} else {%>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= (locals.user ? locals.user.screenName : 'Login') %> <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/user/drafts">My Draft Places</a></li>
+                                    <li><a href="/user/details">Edit My Details</a></li>
+                                    <li><a href="/user/logout">Logout</a></li>
+                                </ul>
+                                
+                            </li>
+                            <%}%>
+                        </ul>                        
+                    </div>
+
+                    <div class="visible-xs">
+                        <ul class="nav navbar-nav">
+                            <%if (locals.URLPath  == '/') {%>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Search<b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <form class="navbar-form navbar-left" role="search" style="margin-left: 0px; margin-right: 0px;">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control searchField" placeholder="Search">
+                                                </div>
+                                                <button type="button" class="btn btn-default searchBtn">Search</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
+                            <%}%>
+                            <% if(!locals.user) {%>
+                                <li><a href="/user/login">Login</a></li>
+                            <%} else {%>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= (locals.user ? locals.user.screenName : 'Login') %> <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/user/drafts">My Draft Places</a></li>
+                                    <li><a href="/user/details">Edit My Details</a></li>
+                                    <li><a href="/user/logout">Logout</a></li>
+                                </ul>
+                                
+                            </li>
+                            <%}%>                        
+                        </ul>                        
+                    </div>
+                </div><!-- /.navbar-collapse -->
+            </div>
+        </nav>        
+    </div>
+    <div id="body">
+        <section class="content-wrapper main-content clear-fix">
+        <%if (locals.flashErrors && locals.flashWarning && locals.flashSuccess) {%>
+            <% if (String(flashErrors).length > 0) {%>
+                <div class="container alert alert-danger alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <%-flashErrors%>
+                </div>
+            <%}; if (String(flashWarning).length > 0) {%>
+                <div class="container alert alert-warning alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <%-flashWarning%>
+                </div>
+            <%}; if (String(flashSuccess).length > 0) {%>
+                <div class="container alert alert-success alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <%-flashSuccess%>
+                </div>
+            <%}; %>
+        <%};%>

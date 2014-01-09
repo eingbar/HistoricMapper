@@ -1,0 +1,71 @@
+<% include ../../head %>
+
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>Edit Tour</h3>
+	</div>
+	<div class="row col-md-12">
+		<form action="" id="editTour" method="post" role="form">
+			<div class="row">
+				<h4 class="col-md-12 tourCount">This tour is used in <%=count%> <%=(count == 1 ? "place":"places")%>.</h4>
+			</div>
+			<div class="row">
+				<div class="col-md-3 form-group"><label for="Text">Tour Text</label><input type="text" name="Text" id="Text" class="form-control" value="<%=model.Text%>"></div>
+				<div class="col-md-4 form-group">				
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="Obsolete" value="false" <% if (!model.Obsolete) {%>checked<%} %>>
+					    Selectable by users
+					  </label>
+					</div>	
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="Obsolete" value="true" <% if (model.Obsolete) {%>checked<%} %>>
+					    Not selectable by users (Obsolete)
+					  </label>
+					</div>			
+				</div>
+				<div class="col-md-3">
+					<button name="submitValue" value="DeleteTour" type="submit" class="btn btn-danger">Delete Tour</button>
+				</div>
+			</div>			
+			<div class="row col-md-12">
+				<a href="/admin/tours/">Back to List</a>
+				<button name="submitValue" value="SaveTour" type="submit" class="btn btn-primary">Save Tour</button>
+			</div>
+			<input type="hidden" name="OrigText" id="OrigText" value="<%=model.Text%>">
+		</form>
+	</div>
+</div>
+<% include ../../jqueryScripts %>
+<script>
+	$("#editTour").validate({
+		rules: {
+			Text: 'required'
+		},
+		messages: {
+		}
+	});
+
+	$( "#editTour" ).submit(function( event ) {
+		
+		var submitVal = $("button[type=submit][clicked=true]").text();
+		if (submitVal == 'Delete Tour') {
+			$("button[type=submit][clicked=true]").addClass('btn-striped');
+			$("button[type=submit][clicked=true]").text('Really Delete Tour??');
+			<%if (count > 0) {%>
+				$(".tourCount").attr('style', 'color: red');
+			<%};%>			
+			event.preventDefault();
+		} else if (submitVal == 'Really Delete Tour??') {
+			// $("button[type=submit][clicked=true]").text('Delete Tour');
+			// $("button[type=submit][clicked=true]").removeClass('btn-striped');
+		};		
+	});
+
+	$("form button[type=submit]").click(function() {
+	    $("button[type=submit]", $(this).parents("form")).removeAttr("clicked");
+	    $(this).attr("clicked", "true");
+	});		
+</script>
+<% include ../../footer %>

@@ -1,0 +1,29 @@
+<% include ../head %>
+
+<div class="container">
+	<form id="signup" method="post" action="/user/login">
+    	<div class="row">
+    		<div class="col-md-3">
+				<div class="row">
+		    		<div class="form-group col-md-12">
+		    			<label for="email">Email Address:</label> 
+		    			<input class="form-control" type="text" name="email"/>
+		    		</div>
+		    	</div>
+		    	<div class="row">
+		    		<div class="form-group col-md-12">
+		    			<label for="Address">Password:</label> 
+		    			<input class="form-control" type="password" name="password"/>
+		    		</div>
+		    	</div>
+    		</div>
+    	</div>    	       
+        <div style="margin-top:15px;" class="row col-md-12">
+        	<input class="btn btn-primary" type="submit" value="Login"/>        	
+        </div>
+    </form>
+    <a href="/user/forgotpassword">Forgot my password</a><br>
+    <a href="/user/signup">Register New Account</a>
+</div>
+<% include ../jqueryScripts %>
+<% include ../footer %>

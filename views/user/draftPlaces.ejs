@@ -1,0 +1,37 @@
+<% include ../head %>
+
+<div class="container">
+	<div class="row col-md-12" style="border-bottom: 2px solid #000000; margin-bottom: 10px;">
+		<h3>My Draft Places</h3>
+	</div>	
+	<div class="row col-md-12">
+    	<form method="post" role="form">
+    		<table class="table table-striped">
+    			<thead>
+    				<tr>
+    					<th></th>
+    					<th>Name</th>
+    					<th>Address</th>
+    					<th>Last Edit Date</th>
+    				</tr>
+    			</thead>
+    			<tbody>
+    				<%for (var i = 0; i < model.length; i++) {
+    					var place = model[i];
+    				%>
+	    				<tr>
+	    					<td><a href="/sites/edit/<%=place._id%>" class="btn btn-primary">Edit Place</a></td>
+	    					<td><%=place.Name%></td>
+	    					<td><%=place.Address%></td>
+	    					<td><%=place.RecModDate%></td>
+	    				</tr>
+    				<%};%>
+    			</tbody>
+    		</table>
+    	</form>
+	</div>
+</div>
+<% include ../jqueryScripts %>
+<% include ../leafletScripts %>
+<script src="/javascripts/geomEditor.js"></script>
+<% include ../footer %>
