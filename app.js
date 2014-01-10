@@ -2,6 +2,7 @@
 /**
  * Module dependencies.
  */
+
 var fs = require('fs');
 var config = require('./config/config');
 var express = require('express');
@@ -53,10 +54,11 @@ app.use(function (req, res, next) {
 });
 app.locals({title: 'Historic Mapper'})
 app.use(app.router);
+//app.use(express.errorHandler());
 
 // development only
 if ('development' == app.get('env')) {
-  //app.use(express.errorHandler());
+  
 }
 
 var indexRoutes = require('./routes/index');
@@ -138,13 +140,23 @@ app.get('/admin/deleteditems/', Auth.isAdministrator, siteAdmin.getDeletedItems)
 app.get('/admin/deleteditems/undo/:id', Auth.isAdministrator, siteAdmin.undoDeletedItem);
 app.get('/admin/deleteditems/delete/:id', Auth.isAdministrator, siteAdmin.processFullDeleteItem);
 
-/*Error 500 Middleware.*/
+process.on('uncaughtException', function (err) {
+  console.log('Caught exception: ' + err);
+});
+
+//Error 500 Middleware.
 app.use(function(err, req, res, next){
     res.status(err.status || 500);
     if (typeof err == 'string') {
       err = {
         status: 500, 
         description: err
+      };
+    }
+    else if (typeof err == 'object') {
+      err = {
+        status: 500, 
+        description: JSON.stringify(err)
       };
     }
     else{
@@ -156,7 +168,7 @@ app.use(function(err, req, res, next){
     res.render('500', { error: err });
 });
 
-/*Error 404 Middleware. This should always be the last route.*/
+//Error 404 Middleware. This should always be the last route.
 app.use(function(req, res, next){
     res.status(404);
 

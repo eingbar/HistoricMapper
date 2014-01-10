@@ -413,36 +413,14 @@ exports.postUploadDocument = function(req, res, next){
         //     if(err) { return next(err);};                                             //Clam Scan
         //     if(is_infected) { return next("File is infected!");};                     //Clam Scan
 
-        if (DocumentType == 'Image') {
-            getAsync = await('saveThumb','saveFile');
-            FileStorage.generateThumb(req.files.Name.path, 150, 150, function (err, RealFolder, FileName){
-                if( err ) return next( getAsync.fail(err) );
-
-                var outThumb = imageFolder + FileName
-                var inImage = RealFolder + '/' + FileName;
-
-                FileStorage.saveFile(inImage, outThumb, function (err, URLFolder, RealFolder, FileName) {
-                    if( err ) return next( getAsync.fail(err) );
-                    FileStorage.deleteLocalFile(inImage , function () {});
-                    getAsync.keep('saveThumb', {URLFolder: URLFolder, RealFolder: RealFolder, FileName: FileName});
-                });
-            });            
-        } else {
-            getAsync = await('saveFile');
-        };        
-
-        FileStorage.saveFile(req.files.Name.path, imageFolder + req.files.Name.originalFilename, function (err, URLFolder, RealFolder, FileName) {
-            if( err ) return next( getAsync.fail(err) );
-            getAsync.keep('saveFile', {URLFolder: URLFolder, RealFolder: RealFolder, FileName: FileName});
-        });
-
-
-        getAsync.then(function(got){
-            
-            if (got.saveThumb) {fileRec.ThumbName = got.saveThumb.FileName}; //its an image with a thumbnail
-            fileRec.URLFolder = got.saveFile.URLFolder;
-            fileRec.RealFolder = got.saveFile.RealFolder;
-            fileRec.FileName = got.saveFile.FileName;
+        var num = (DocumentType == 'Image' ? 2: 1);
+        var saveThumb = {};
+        var saveFile = {};
+        var done = _.after(num, function () {
+            if (saveThumb.FileName) {fileRec.ThumbName = saveThumb.FileName}; //its an image with a thumbnail
+            fileRec.URLFolder = saveFile.URLFolder;
+            fileRec.RealFolder = saveFile.RealFolder;
+            fileRec.FileName = saveFile.FileName;
 
             site.Files.push(fileRec);            
             site.save(function (err, savedSite) {
@@ -460,13 +438,68 @@ exports.postUploadDocument = function(req, res, next){
                     res.redirect( '/sites/edit/' + site._id );                                        
                 };
             });
-        },function(err){
-            next( err );
         });
+
+        if (DocumentType == 'Image') {
+            getAsync = await('saveThumb','saveFile');
+            FileStorage.generateThumb(req.files.Name.path, 150, 150, function (err, RealFolder, FileName){
+                if( err ) { return handleFileError(req, res, err, next) };
+
+                var outThumb = imageFolder + FileName
+                var inImage = RealFolder + '/' + FileName;
+
+                FileStorage.saveFile(inImage, outThumb, function (err, URLFolder, RealFolder, FileName) {
+                    if( err ) { return handleFileError(req, res, err, next) };
+                    FileStorage.deleteLocalFile(inImage , function () {});
+                    saveThumb = {URLFolder: URLFolder, RealFolder: RealFolder, FileName: FileName};
+                    done();
+                });
+            });            
+        } else {
+            getAsync = await('saveFile');
+        };        
+
+        FileStorage.saveFile(req.files.Name.path, imageFolder + req.files.Name.originalFilename, function (err, URLFolder, RealFolder, FileName) {
+            if( err ) { return handleFileError(req, res, err, next) };
+            saveFile = {URLFolder: URLFolder, RealFolder: RealFolder, FileName: FileName};
+            done();
+        });
+
+        // getAsync.then(function(got){
+            
+            
+        // },function(err){
+        //     try {
+        //         if ((new String(err).indexOf('Error: EPERM, open') == 0)) {
+        //             req.flash('error', err);
+        //             //res.render('sites/uploadDocument', {title: 'Upload Document'});
+        //             return res.redirect( '/sites/details/' +  req.params.id + '/document/upload' );
+        //         } else {
+        //             next( err );
+        //         };  
+        //     }
+        //     catch(err){
+        //         //next( err );
+        //     }          
+        // });
         //}); //Clam Scan
     });
     // res.render('sites/uploadDocument', {title: 'Upload Document'});
 };
+
+function handleFileError (req, res, err, next) {
+    try{
+        if ((new String(err).indexOf('Error: EPERM, open') == 0)) {
+            req.flash('error', 'The file you uploaded is invalid and has been removed by the system. A possible reason for this could be that the file was infected with a virus.');
+            return res.redirect( '/sites/details/' +  req.params.id + '/document/upload' );
+        } else {
+            return next(err);
+        }
+    }
+    catch(errr){
+        return next(err);
+    }
+}
 
 exports.getEditDocument = function(req, res, next){    
     HistoricSite.getAuthSingleSite( req.params.id, 2, res.locals.user, function ( err, site ){

@@ -24,10 +24,18 @@ function saveFile (file, newFileName, next) {
 
 	fs.mkdirp(path.dirname(newPath), function (err) {
 		if( err ) return next( err );
-		fs.copy(file, newPath, function (err) {
-			if( err ) return next( err );
-			next(null, path.dirname(destURL), path.dirname(newPath), path.basename(newPath));			
-		});
+		
+		fs.readFile(file, function (err, data) {
+            if( err ) return next( err );
+            fs.writeFile (newPath, data, function(err) {
+                if( err ) return next( err );
+                next(null, path.dirname(destURL), path.dirname(newPath), path.basename(newPath));
+            });
+        });
+		// fs.copy(file, newPath, function (err) {
+		// 	if( err ) return next( err );
+						
+		// });
 	});
 };
 exports.saveFile = saveFile;

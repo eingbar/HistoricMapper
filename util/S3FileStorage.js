@@ -29,9 +29,10 @@ var s3 = new AWS.S3();
 
 exports.saveFile = function (file, newFileName, next) {
 	newFileName = newFileName.replace(path.basename(newFileName), path.basename(file));
-
 	fs.readFile(file, function(err, file_buffer){
-		if (err) {return next(err)};
+		if (err) {
+			return next(err)
+		};
 	    var params = {
 			Bucket: GLOBAL.S3Bucket,
 			Key: newFileName,
@@ -39,9 +40,6 @@ exports.saveFile = function (file, newFileName, next) {
 			ContentType: mime.lookup(file),
 			Body: file_buffer,  
 		};
-
-		var bob = 123;
-
 	    s3.putObject(params, function (err, data) {
 	    	if (err) {return next(err)};
 	    	next(null, 'https://s3.amazonaws.com/EurekaHistoryUploads/' + path.dirname(newFileName), path.dirname(newFileName), path.basename(newFileName));
