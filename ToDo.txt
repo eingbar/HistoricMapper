@@ -34,6 +34,6 @@ Send email to user when content approved
 **Set up instance
 **Set up SES (email services)
 **Set up DNS
-Point Domain Name Servers at AWS
+**Point Domain Name Servers at AWS
 
 
