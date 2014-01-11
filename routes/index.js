@@ -85,7 +85,9 @@ exports.placesGeoJson = function(req, res, next){
 				};
 				output.features.push(feature);
 			};
-			res.end('var placesGeoJson = ' + JSON.stringify(output));
+			if (req.query.pure) {
+				res.end(JSON.stringify(output));
+			} else {res.end('var placesGeoJson = ' + JSON.stringify(output));};			
         });
     } else {
         var sites = HistoricSite.generateRandomSites(req.query.random);
