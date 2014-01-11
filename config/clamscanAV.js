@@ -1,6 +1,6 @@
 clam_path = GLOBAL.VirusScanProgram || 'clamdscan';
 
-var clam = require('./clamscan_MOD')({
+var clam = require('./clamscan_Mod')({
     max_forks: 2, // Num of files to scan at once (should be no more than # of CPU cores)
     clam_path: clam_path, // Path to clamscan binary on your server
     remove_infected: true, // If true, removes infected files
