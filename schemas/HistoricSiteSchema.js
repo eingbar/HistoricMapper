@@ -135,7 +135,7 @@ HistoricSiteSchema.statics.getAuthSingleSite = function (siteID, authLevel, user
             else { return next({status: 403, description: 'Forbidden (' + userAuthLevel + ',' + authLevel + ')'}); };
         }
         catch(err){
-            next(err);
+            return next(err);
         }            
     });
 };

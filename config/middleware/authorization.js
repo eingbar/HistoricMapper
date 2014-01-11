@@ -4,6 +4,7 @@ exports.isAuthenticated = function (req, res, next){
     if(req.isAuthenticated()){
         next();
     }else{
+        clearUploadedFiles(req);
         req.session.returnToURL = req.url;
         res.redirect('/user/login');
     }
@@ -18,6 +19,7 @@ exports.isModerator = function (req, res, next){
             res.redirect('/user/login');
         };
     }else{
+        clearUploadedFiles(req);
         req.session.returnToURL = req.url;
         res.redirect('/user/login');
     }
@@ -31,9 +33,21 @@ exports.isAdministrator = function (req, res, next){
             res.redirect('/user/login');
         };
     }else{
+        clearUploadedFiles(req);
         req.session.returnToURL = req.url;
         res.redirect('/user/login');
     }
+}
+
+function clearUploadedFiles (req) {
+    if (req.files) {
+        var FileStorage = require('../../util/FileStorage');
+        for (var property in req.files) {
+            if (req.files[property].path) {
+                FileStorage.deleteLocalFile(req.files[property].path, function (argument) { });
+            };
+        };
+    };    
 }
 
 exports.userExist = function(req, res, next) {

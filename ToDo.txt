@@ -30,10 +30,10 @@ Send email to user when content approved
 
 
 //AWS//
-Setup account with consolidated billing
-Set up instance
-Set up SES (email services)
-Set up DNS
+**Setup account with consolidated billing
+**Set up instance
+**Set up SES (email services)
+**Set up DNS
 Point Domain Name Servers at AWS
 
 
