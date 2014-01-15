@@ -36,4 +36,16 @@ Send email to user when content approved
 **Set up DNS
 **Point Domain Name Servers at AWS
 
-
+//Pre-Testing//
+Add help screen to map
+Help text on how to digitize/edit
+Add help text to my draft places
+**Re-order search results
+**Check size limits on Document Upload (Changed to 10M)
+**Remove cheater link from registration
+**Remove moderator digest option from User details if not a mod.
+**Check Tours/Keyword removal on the create page (Nielson Pulgin error???)
+**Remove TODO from Upload Document page
+**Check email when sending back to user (was in spam)
+**Check back/Cancel links (Upload Document Page, Edit Document Details) href="javascript:history.back()"
+**Undefined in comment username when commenting as a user

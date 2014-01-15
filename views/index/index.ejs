@@ -80,13 +80,11 @@
         var baseLayers = {
             "ESRI Streets": esriStreets,
             "OSM Streets": osmLayer,
-            "ESRI Satalite": esriImagryWithLabels,
-            "MapQuest Satalite": mapquest
+            "ESRI Satellite": esriImagryWithLabels
         };
 
         var overlays = {
             "Historic Places": itemClusters,
-            "Single Points": dbItems,
             "Historic Districts": historicDistricts
         };
 
@@ -210,6 +208,13 @@
                         setClickHandlerForSites (feature, layer);
                     }
                 }));
+            };
+
+            for (var i = results.length - 1; i >= 0; i--) {
+                var result = results[i];
+                var _id = result.obj._id;
+                var tile = $("div#featureList div#ListItem_" + _id)[0];
+                $("#featureList").find(tile).prependTo("#featureList");
             };
 
             $("#searchResults").show().find(".text").text(results.length + (resultsTitle ? ' ' + resultsTitle + ' found.' : " search results found."));

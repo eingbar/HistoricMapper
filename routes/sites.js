@@ -140,7 +140,7 @@ exports.postDetails = function(req, res, next){
             var newComment = { 
                 Author: 
                 { 
-                    Username: (res.locals.user ? res.locals.user.username : 'Anonymous'), 
+                    Username: (res.locals.user ? res.locals.user.screenName : 'Anonymous'), 
                     Email: (res.locals.user ? res.locals.user.email : null),
                     id: (res.locals.user ? res.locals.user._id : null)
                 }, 

@@ -38,22 +38,24 @@
 							<input type="hidden" id="existingScreenName" value="<%=model.screenName%>">
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-6 form-group">
-							<div class="radio">
-							  <label>
-							    <input type="radio" name="ModDailyDigest" id="ModDailyDigest1" value="true" <% if (model.ModDailyDigest) {%>checked<%} %>>
-							    Subscribed to moderator digest
-							  </label>
+					<%if (model.userLevel >= 50) {%>
+						<div class="row">
+							<div class="col-md-6 form-group">
+								<div class="radio">
+								  <label>
+								    <input type="radio" name="ModDailyDigest" id="ModDailyDigest1" value="true" <% if (model.ModDailyDigest) {%>checked<%} %>>
+								    Subscribed to moderator digest
+								  </label>
+								</div>
+								<div class="radio">
+								  <label>
+								    <input type="radio" name="ModDailyDigest" id="ModDailyDigest2" value="false" <% if (!model.ModDailyDigest) {%>checked<%} %>>
+								    Not subscribed to moderator digest
+								  </label>
+								</div>
 							</div>
-							<div class="radio">
-							  <label>
-							    <input type="radio" name="ModDailyDigest" id="ModDailyDigest2" value="false" <% if (!model.ModDailyDigest) {%>checked<%} %>>
-							    Not subscribed to moderator digest
-							  </label>
-							</div>				
 						</div>
-					</div>
+					<%};%>
 				</div>
 				<div class="well col-md-offset-1 col-md-4">
 					<div class="row col-md-12">
