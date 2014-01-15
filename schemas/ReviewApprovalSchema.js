@@ -85,6 +85,10 @@ ReviewApprovalSchema.statics.finishApproval = function (Status, Type, ItemID, Si
             HistoricSite.update({"_id": SiteID, "Comments._id": ItemID}, {"$set": {"Comments.$.Approved": (Status == "Published"? true : false), "Comments.$.Obsolete": (Status == "Published"? false : true), "Comments.$.RecModBy": UserID, "Comments.$.RecModDate": Date.now(), RecModBy: UserID, RecModDate: Date.now()}}, { multi: false }, function (err, numberAffected, raw) {
                 if( err ) return next( err );
                 done();
+            });
+            ReviewApproval.update({"SiteID": SiteID, "ItemID": ItemID, Type: Type}, {"$set": {"Status": Status, DecisionUser: UserID, RecModBy: UserID, RecModDate: Date.now()}}, { multi: true }, function (err) {
+                if( err ) return next( err );
+                done();
             });            
             break;
         case 'Suggestion':
