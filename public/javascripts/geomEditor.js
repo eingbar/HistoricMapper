@@ -29,18 +29,17 @@
 
         var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+        });
 
-        var mapquestUrl = 'http://{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png';
-        var subDomains = ['otile1', 'otile2', 'otile3', 'otile4'];
-        var mapquestAttrib = 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">';
-        var mapquest = new L.TileLayer(mapquestUrl, {maxZoom: 18, attribution: mapquestAttrib, subdomains: subDomains});
+        var esriStreets = L.esri.basemapLayer("Streets").addTo(map);
+        var esriImagryWithLabels = L.layerGroup([L.esri.basemapLayer("Imagery"), L.esri.basemapLayer("ImageryLabels"), L.esri.basemapLayer("ImageryTransportation")]);
 
         var drawnItems = new L.FeatureGroup().addTo(map);
 
         var baseLayers = {
-            "OSM": osmLayer,
-            "MapQuest Satalite": mapquest
+            "ESRI Streets": esriStreets,
+            "OSM Streets": osmLayer,
+            "ESRI Satellite": esriImagryWithLabels
         };
 
         var overlays = {
