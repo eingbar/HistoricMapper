@@ -54,7 +54,11 @@
                                 setClickHandlerForSites (feature, layer);
                             }
                         });
-        var historicDistricts = L.geoJson(districtsGeoJson);
+        var historicDistricts = L.geoJson(districtsGeoJson, {
+                                onEachFeature: function (feature, layer) {
+                                    layer.bindPopup(feature.properties.Name);
+                                }
+                            });
         var itemClusters = L.markerClusterGroup({
             disableClusteringAtZoom: 18,
             iconCreateFunction: function (cluster) {
