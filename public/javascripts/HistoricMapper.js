@@ -31,3 +31,11 @@ $.validator.setDefaults({
 		.closest('.control-group').removeClass('error').addClass('success');
 	}*/	
 });
+
+function localStorageSupported() {
+	try {
+		return "localStorage" in window && window["localStorage"] !== null;
+	} catch (e) {
+		return false;
+	}
+}

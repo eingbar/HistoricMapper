@@ -4,6 +4,7 @@
 		<div id="footer"></div>
 	</div>    
 </div>
+<%if (GLOBAL.TrackVisitors) {%>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -14,5 +15,9 @@
   ga('send', 'pageview');
 
 </script>
+<%};%>
 </body>
 </html>
+<%if (GLOBAL.LiveReload) {%>
+<script src="//192.168.25.102:35729/livereload.js"></script>
+<%};%>

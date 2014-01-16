@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/> <!--320-->
     <title><%= (title || '') %></title>
     <link rel='stylesheet' href='/stylesheets/output.css' />  
     <link rel="icon" type="image/png" href="/images/EurekaLogo.png">
 </head>
 <body>
 <div id="container">
-    <div>
-        <img class="headerGraphic hidden-xs" src="/images/EurekaHeader.jpg">
+    <div>        
         <div id="header" class="hidden-xs">
             <div class="container">
+                <img class="headerGraphic hidden-xs" src="/images/EurekaHeader.jpg" style="margin-top: -10px;">
                 <img class="logo" src="/images/EurekaLogo.png">
                 <div class="headerTitle">
                     City of Eureka<br>
@@ -72,7 +72,7 @@
                         </li>
                         <% } %>
                     </ul>
-                    <% } %>
+                    <% } %>                    
                     <div class="visible-md visible-lg">
                         <ul class="nav navbar-nav pull-right">
                             <% if(!locals.user) {%>
@@ -164,6 +164,11 @@
                             <%}%>                        
                         </ul>                        
                     </div>
+                    <%if (locals.URLPath  == '/') {%>
+                        <ul class="nav navbar-nav pull-right">
+                            <li><a href="javascript:openHelpModal()">Help</a></li>
+                        </ul>
+                    <%};%>
                 </div><!-- /.navbar-collapse -->
             </div>
         </nav>        

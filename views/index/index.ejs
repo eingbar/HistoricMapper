@@ -33,8 +33,92 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<!-- Modal -->
+<div class="modal fade" id="AppHelpPopupModal" tabindex="-1" role="dialog" aria-labelledby="HelpModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-help-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><span id="myModalLabel"><%=GLOBAL.SiteName%></span> <span id="draftFlag" class="pull-right label label-danger"></span></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12"><strong>Welcome to <%=GLOBAL.SiteName%>.</strong> This site is designed to raise awareness about the many historic places in the area. Please explore the site and contribute new and interesting information if you wish. To help you start here is a legend of the different icons you may see on the map:</div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="media">
+                    <div class="pull-left media-object helpLegendIcon thumbnail" style="height: 50px; width:60px; background-position: 0 -0px;"></div>
+                    <div class="media-body">
+                        <h4 class="media-heading">Historic Place</h4>
+                        A historic place with information present.
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="media">
+                    <div class="pull-left media-object helpLegendIcon thumbnail" style="height: 50px; width:60px; background-position: 0 -50px;"></div>
+                    <div class="media-body">
+                        <h4 class="media-heading">Unfinished Place</h4>
+                        A historic place with some information missing.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-md-4" style="padding-right: 0px;">
+                <img src="/images/Clusters.jpg" class="media-object thumbnail" alt="" style="margin-bottom: 0">
+            </div>
+            <div class="col-md-8">
+                <h4 class="media-heading">Clusters</h4>
+                Clusters represent multiple places in close proximity to each other. When you click on a cluster the display zooms to the cluster area.<br>
+                Green cluster: 2-5 places<br>
+                Yellow cluster: 6-10 places<br>
+                Orange cluster: >10 places<br>
+            </div>
+        </div>
+        <%if (locals.user) {%>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="media">
+                    <div class="pull-left media-object helpLegendIcon thumbnail" style="height: 50px; width:60px; background-position: 0 -100px;"></div>
+                    <div class="media-body">
+                        <h4 class="media-heading">Draft Place</h4>
+                        A place you have created and are still editing.
+                    </div>
+                </div>
+            </div>
+            <%if (locals.user && locals.user.userLevel >= 50) {%>
+            <div class="col-md-6">
+                <div class="media">
+                    <div class="pull-left media-object helpLegendIcon thumbnail" style="height: 50px; width:60px; background-position: 0 -150px;"></div>
+                    <div class="media-body">
+                        <h4 class="media-heading">Places Pending Review</h4>
+                        A place submitted for review by moderators.
+                    </div>
+                </div>
+            </div>
+            <%};%>
+        </div>
+        <%};%>
+        <div class="row">
+            <div class="col-md-12">
+                <h4>How To Contribute</h4>                
+                Your comments are always welcome on any historic place, using the comments section displayed for each place. However, if you would like to create new places or contribute more information about historic places, please sign up to be a contributor <a href="/user/signup">by following this link</a>.
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <script>
-    var map;
+    var map;    
     $(function(){
         map = L.map('map');
 
@@ -65,9 +149,9 @@
                 var childCount = cluster.getChildCount();
 
                 var c = ' marker-cluster-';
-                if (childCount < 5) {
+                if (childCount <= 5) {
                     c += 'small';
-                } else if (childCount < 7) {
+                } else if (childCount <= 10 ) {
                     c += 'medium';
                 } else {
                     c += 'large';
@@ -406,6 +490,22 @@
             };            
         }
     });
+    
+    function openHelpModal () {        
+        $('#AppHelpPopupModal').modal();
+    }
+
+    $('#AppHelpPopupModal').on('hidden.bs.modal', function (e) {
+        if (localStorageSupported()) {
+            localStorage.setItem("SkipHelpPopup", "true");
+        };
+    });
+
+    if (localStorageSupported() && localStorage.getItem("SkipHelpPopup") == "true") {
+        //Do nothing
+    } else {
+        openHelpModal();  
+    };    
 </script>
 
 <% include ../footer %>

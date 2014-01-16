@@ -56,6 +56,13 @@ exports.postEditUsers = function(req, res, next){
 			if (!user) {res.render('404', { url: req.url, title:'Error 404: File Not Found' }); return;};
 
 			if (req.body.submitValue == 'SaveUser') {
+
+				var reCheckEmail = false;
+				if (req.body.email != user.email) {
+					reCheckEmail = true;
+			    	user.emailVerified = false
+			    };  
+
 				user.firstName = req.body.firstName;
 				user.lastName = req.body.lastName;
 				user.email = req.body.email;
@@ -67,12 +74,21 @@ exports.postEditUsers = function(req, res, next){
 				if (req.body.allowEmailAgain == 'true') {
 					user.emailLocked = false;
 					user.emailLockedReason = null;
-				};
+				};				
 
 				user.save(function (err) {
 					if( err ) throw err;
-					req.flash('success', 'User Updated');
-					res.redirect( '/admin/users/' );
+					if (reCheckEmail) {
+						var mailer = require('../config/mailer');
+						mailer.sendVerificationEmail(user, function (err) {
+							if( err ) return next(err);
+							req.flash('success', 'User and Email address updated. Verification email has been resent.');
+							res.redirect( '/admin/users/' );
+						});
+					} else {
+						req.flash('success', 'User Updated');
+						res.redirect( '/admin/users/' );
+					};					
 				});
 			} else if (req.body.submitValue == 'ResetPassword') {
 				User.resetPassword(req.params.id, function (err, results) {

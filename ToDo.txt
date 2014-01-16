@@ -37,9 +37,9 @@ Send email to user when content approved
 **Point Domain Name Servers at AWS
 
 //Pre-Testing//
-Add help screen to map
 Help text on how to digitize/edit
-Add help text to my draft places
+**Add help screen to map
+**Add help text to my draft places
 **Re-order search results
 **Check size limits on Document Upload (Changed to 10M)
 **Remove cheater link from registration
@@ -49,3 +49,9 @@ Add help text to my draft places
 **Check email when sending back to user (was in spam)
 **Check back/Cancel links (Upload Document Page, Edit Document Details) href="javascript:history.back()"
 **Undefined in comment username when commenting as a user
+
+//ToDo//
+Update nginx to allow 100M then limit in Node to 10M
+Return all results??
+**Reduce footer and header size for more mapping
+**When Admin changes email for user send verification again / Also when user changes own email
