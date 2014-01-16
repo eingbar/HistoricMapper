@@ -229,18 +229,18 @@ function deleteFile (file, next) {
         });
 
         FileStorage.deleteFile(file.RealFolder + '/' + file.FileName, function (err) {
-            if( err ) return next( err );
+            //if( err ) return next( err );
             done();
         });
 
         FileStorage.deleteFile(file.RealFolder + '/' + file.ThumbName, function (err) {
-            if( err ) return next( err );
+            //if( err ) return next( err );
             done();
         }); 
     } else {
         //delete file
         FileStorage.deleteFile(file.RealFolder + '/' + file.FileName, function (err) {
-            if( err ) return next( err );
+            //if( err ) return next( err );
             return next(null);
         });
     };

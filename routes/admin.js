@@ -379,7 +379,7 @@ exports.undoDeletedItem = function (req, res, next) {
 exports.processFullDeleteItem = function (req, res, next) {
 	DeletedItem.processFullDelete(req.params.id, function (err, item) {
 		if (err) {
-			req.flash('error', err);
+			req.flash('error', JSON.stringify(err));
 			res.redirect( '/admin/deleteditems/' );
 			return;
 		};

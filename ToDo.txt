@@ -51,7 +51,6 @@ Help text on how to digitize/edit
 **Undefined in comment username when commenting as a user
 
 //ToDo//
-Update nginx to allow 100M then limit in Node to 10M
-Return all results??
+**Update nginx to allow 100M then limit in Node to 10M
 **Reduce footer and header size for more mapping
 **When Admin changes email for user send verification again / Also when user changes own email

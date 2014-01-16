@@ -386,9 +386,28 @@ exports.getUploadDocument = function(req, res, next){
 exports.postUploadDocument = function(req, res, next){
     //get Place / Site record    
     var clamscan = require('../config/clamscanAV');
+    var mime = require('mime');
     HistoricSite.getAuthSingleSite( req.params.id, 1, res.locals.user, function ( err, site ){
-        if( err ) return next( err );        
-        var DocumentType = ((req.files.Name.headers['content-type'] == 'image/jpeg') || (req.files.Name.headers['content-type'] == 'image/gif') || (req.files.Name.headers['content-type'] == 'image/png') ? 'Image' : 'Document');
+        if( err ) return next( err );
+        var mimeType = mime.lookup(req.files.Name.path);
+        if (_.indexOf(GLOBAL.AllowedMimeTypes, mimeType) == -1) {
+            FileStorage.deleteLocalFile(req.files.Name.path , function () {});
+            req.flash('error', 'The file type you uploaded (' + mimeType + ') is not approved. The file has been deleted.');
+            return res.redirect( '/sites/details/' +  req.params.id + '/document/upload' );
+        };
+        if (req.files.Name.headers['content-type'] == 'application/octet-stream') {
+            var ext = (/[.]/.exec(req.files.Name.originalFilename)) ? /[^.]+$/.exec(req.files.Name.originalFilename)[0] : undefined;
+            if (!ext || _.indexOf(GLOBAL.AllowedBinaryFiles, ext) == -1) {
+                req.flash('error', 'The file type you uploaded (' + req.files.Name.headers['content-type'] + ') is not approved. The file has been deleted.');
+                return res.redirect( '/sites/details/' +  req.params.id + '/document/upload' );
+            };
+        };        
+        if (req.files.Name.size > (GLOBAL.MaxUploadSize * 1024 * 1024)) {
+            FileStorage.deleteLocalFile(req.files.Name.path , function () {});
+            req.flash('error', 'The file you uploaded is to large (' + (req.files.Name.size / 1024 / 1024).toFixed(2) + 'MB). The file has been deleted.');
+            return res.redirect( '/sites/details/' +  req.params.id + '/document/upload' );
+        };
+        var DocumentType = (_.indexOf(GLOBAL.ImageMimeTypes, req.files.Name.headers['content-type']) > -1 ? 'Image':'Document')
         var approved = ((site.Status == "Draft" && site.DataOwner.equals(res.locals.user._id)) || (res.locals.user.userLevel >= 50) ? true : false);
         var imageFolder = site._id + '/';
         var SiteID = site._id;
@@ -420,7 +439,7 @@ exports.postUploadDocument = function(req, res, next){
             site.Files.push(fileRec);            
             site.save(function (err, savedSite) {
                 if( err ) return next( err );
-                FileStorage.deleteLocalFile(req.files.Name.path , function () {});                    
+                FileStorage.deleteLocalFile(req.files.Name.path , function () {});
                 if (!approved) {
                     ReviewApproval.createApproval(DocumentType, fileRec.Caption, savedSite.Files[savedSite.Files.length - 1]._id, SiteID, res.locals.user._id, function (err) {
                         if( err ) return next( err );  
