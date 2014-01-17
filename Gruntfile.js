@@ -79,7 +79,7 @@ module.exports = function(grunt) {
         files: {
           'public/javascripts/HistoricMapper.min.js': ['public/javascripts/HistoricMapper.js'],
           'public/javascripts/jqueryFiles.min.js': ['public/javascripts/jquery-1.10.2.js', 'public/javascripts/jquery.lazyload.js', 'public/javascripts/lightbox-2.6.min.js', 'public/javascripts/jquery.validate.js', 'public/javascripts/additional-methods.js', 'public/javascripts/twitter-bootstrap-3.0.0.js', 'public/javascripts/knockout-3.0.0.js'],
-          'public/javascripts/leafletFiles.min.js': ['public/javascripts/leaflet.js', 'public/javascripts/leaflet.markercluster-src.js', 'public/javascripts/leaflet.draw.js', 'public/javascripts/esri-leaflet-src.js', 'public/javascripts/leaflet.awesome-markers.js']
+          'public/javascripts/leafletFiles.min.js': ['public/javascripts/leaflet.js', 'public/javascripts/leaflet.markercluster-src.js', 'public/javascripts/leaflet.draw.js', 'public/javascripts/esri-leaflet-src.js', 'public/javascripts/leaflet.awesome-markers.js', 'public/javascripts/leaflet-hash.js']
         }
       }
     },
