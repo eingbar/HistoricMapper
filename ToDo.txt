@@ -37,7 +37,7 @@ Send email to user when content approved
 **Point Domain Name Servers at AWS
 
 //Pre-Testing//
-Help text on how to digitize/edit
+**Help text on how to digitize/edit
 **Add help screen to map
 **Add help text to my draft places
 **Re-order search results

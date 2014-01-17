@@ -203,3 +203,39 @@ label.error {
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   }
 }
+
+.drawHelp{
+  background-image: url("images/spritesheet.png");
+  background-repeat: no-repeat;
+  height: 15px;
+  width: 15px;
+  display: inline-block;
+}
+
+.drawHelp.polyline {
+  background-position: -8px -8px;
+}
+
+.drawHelp.polygon {
+  background-position: -36px -8px;
+}
+
+.drawHelp.rectangle {
+  background-position: -68px -8px;
+}
+
+.drawHelp.circle {
+  background-position: -98px -8px;
+}
+
+.drawHelp.marker {
+  background-position: -127px -8px;
+}
+
+.drawHelp.edit {
+  background-position: -158px -8px;
+}
+
+.drawHelp.remove {
+  background-position: -188px -8px;
+}
