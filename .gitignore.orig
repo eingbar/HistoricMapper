@@ -1,0 +1,20 @@
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+
+pids
+logs
+results
+
+npm-debug.log
+node_modules
+<<<<<<< HEAD
+config/config.js
+public/uploads/
+=======
+>>>>>>> 6c9c705d0272db07b297e5f76887ebb3b2d066d0
