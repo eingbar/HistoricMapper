@@ -1,7 +1,7 @@
 var fs = require('fs'),
     L = require('../server-side-leaflet/leaflet');
 var _ = require('underscore');
-var siteUtils = require('../util/SiteUtils');
+var siteUtils = require('../util/siteUtils');
 var mongoose = require( 'mongoose' );
 var HistoricDistrict = mongoose.model( 'HistoricDistrict' );
 var HistoricSite = mongoose.model( 'HistoricSite' );
