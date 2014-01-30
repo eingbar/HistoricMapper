@@ -1,6 +1,6 @@
 {
-  "name": "EurekaHistory",
-  "version": "0.7.1",
+  "name": "HistoryMapper",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "node app.js"
@@ -21,7 +21,9 @@
     "mongoose-text-search": "0.0.2",
     "node-schedule": "~0.1.13",
     "aws-sdk": "~2.0.0-rc5",
-    "mime": "~1.2.11"
+    "mime": "~1.2.11",
+    "request": "~2.33.0",
+    "jsdom": "~0.8.11"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

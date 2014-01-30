@@ -1,0 +1,615 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"ponit",
+				"pointData"
+			],
+			[
+				"Ob",
+				"obj"
+			],
+			[
+				"map",
+				"mapHeight"
+			],
+			[
+				"he",
+				"height"
+			],
+			[
+				"point",
+				"pointData"
+			],
+			[
+				"latl",
+				"latLngs"
+			],
+			[
+				"for",
+				"for	for (…) {…}"
+			],
+			[
+				"ta",
+				"thead	Tag"
+			],
+			[
+				"h",
+				"href	Attr"
+			],
+			[
+				"su",
+				"submitForm"
+			],
+			[
+				"User",
+				"UserSchema"
+			],
+			[
+				"new",
+				"newKeyword"
+			],
+			[
+				"fun",
+				"fun	Function"
+			],
+			[
+				"a",
+				"action	Attr"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "config/config.js",
+			"settings":
+			{
+				"buffer_size": 904,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "/**\n * Created by Adam on 10/4/13.\n */\nvar mongoose = require( 'mongoose' );\nvar HistoricDistrict = mongoose.model( 'HistoricDistrict' );\nvar HistoricSite = mongoose.model( 'HistoricSite' );\nvar Tour = mongoose.model( 'Tour' );\nvar await = require('await');\nvar _ = require('underscore');\nvar siteUtils = require('../util/siteUtils');\nvar request = require('request');\nvar fs = require('fs');\nvar path = require('path');\nvar FileStorage = require('../util/FileStorage');\n\nexports.index = function(req, res, next){\n	Tour.find({Obsolete: false}, function (err, Tours) {\n		if (err) {return next(err);};\n		if (Tours.length == 0) {\n			var random = (req.query.random ? req.query.random : null);\n    		res.render( 'index/index', {random: random, tours: []});\n		};\n		var tourArr = [];\n		for (var i = 0; i < Tours.length; i++) {\n			tourArr.push(Tours[i].Text);\n		};\n		var toursAwait = await(tourArr);\n\n		for (var i = 0; i < tourArr.length; i++) {\n			var tourName = tourArr[i];\n			HistoricSite.count({Tours:tourName}, function (err, count) {\n				if (err) {return next(err);};\n				toursAwait.keep(tourName, count);\n			});\n		};\n\n		toursAwait.then(function (data) {\n			var tours = [];\n			for (var i = 0; i < tourArr.length; i++) {\n				if (data[tourArr[i]] > 0) {\n					tours.push({Name: tourArr[i], Count: data[tourArr[i]]});\n				};				\n			};\n			var random = (req.query.random ? req.query.random : null);\n    		res.render( 'index/index', {random: random, tours: tours});\n		})\n	});	\n};\n\nexports.historicDistricts = function(req, res, next){\n	HistoricDistrict.find({Obsolete: false}, function (err, districts) {\n		if (err) {return next(err);};\n		// res.writeHead(200, { 'Content-Type': 'application/json' });\n\n		createGeoJson(districts, function (err, output) {\n			if (err) {return next(err);};\n			res.end('var districtsGeoJson = ' + JSON.stringify(output));\n		});	    \n	});    \n};\n\nexports.placesGeoJson = function(req, res, next){\n	var HistoricSite = mongoose.model( 'HistoricSite' );\n	if (!req.query.random) {\n        var status = [{Status: 'Published'}];\n        if (res.locals.user) {status.push({Status: 'Draft', \"DataOwner\": res.locals.user._id});};\n        if (res.locals.user && res.locals.user.userLevel >= 50) {status.push({Status: 'Pending Review'});};    \n\n        HistoricSite.\n        find({$or: status, Obsolete: false}).sort({ RecModDate: 'desc'}).exec(function ( err, sites, count ){\n            if( err ) return next( err );\n			res.writeHead(200, { 'Content-Type': 'application/json' });\n			var output = {};\n			output.type = \"FeatureCollection\"\n			output.features = [];\n\n			for (var i = 0; i < sites.length; i++) {\n				var site = sites[i];\n				var feature = {\"type\": \"Feature\", \"properties\": {}, \"geometry\": {}};\n				feature.geometry = site.loc;\n				feature.properties._id = site._id;\n				feature.properties.Name = site.Name;\n				feature.properties.Status = site.Status;\n				feature.properties.Complete = (site.Description && (site.Files.length > 0 && siteUtils.getImageURLForSite(site.Files))? true : false);\n				if (site.Files.length > 0) {\n					feature.properties.ImageURL = siteUtils.getImageURLForSite(site.Files);\n				} else {\n					//var url = 'http://maps.googleapis.com/maps/api/streetview?size=200x150&location=' + site.Address + ' Eureka CA&sensor=false&key=AIzaSyB3ww0AdcfTz3b28cGCQ2islQxv0g964EE'\n					var url = null;\n					feature.properties.ImageURL = url;\n				};\n				output.features.push(feature);\n			};\n			if (req.query.pure) {\n				res.end(JSON.stringify(output));\n			} else {res.end('var placesGeoJson = ' + JSON.stringify(output));};			\n        });\n    } else {\n        var sites = HistoricSite.generateRandomSites(req.query.random);\n        res.writeHead(200, { 'Content-Type': 'application/json' });\n        createGeoJson(sites, function (err, output) {\n			if (err) {return next(err);};\n			res.end('var placesGeoJson = ' + JSON.stringify(output));\n		});\n    };  \n};\n\nfunction createGeoJson (obj, next) {\n	try{\n		var output = {};\n		output.type = \"FeatureCollection\"\n		output.features = [];\n		var skipFields = ['__v'];\n\n		for (var i = 0; i < obj.length; i++) {\n			var district = obj[i];\n			var feature = {\"type\": \"Feature\", \"properties\": {}, \"geometry\": {}};\n			if (district.toObject) {\n				district = district.toObject();\n			};\n			for (var property in district) {\n				if (skipFields.indexOf(property) != -1) { continue; };\n			    if (district.hasOwnProperty(property)) {\n			    	if (property == \"loc\") {\n			    		feature.geometry = district[property];\n			    	} else {\n			        	feature.properties[property] = district[property];\n			    	};\n			    }\n			}\n			output.features.push(feature);\n		};\n		next(null, output);\n	}\n	catch(err){next(err);}	\n}\n\nvar file = __dirname + '../test.json';\nexports.importSites = function(req, res, next){\n	var HistoricSite = mongoose.model( 'HistoricSite' );	\n	\n	for (var i = 0; i < historicSitesFromEureka.features.length; i++) {\n		var jsonSite = historicSitesFromEureka.features[i];\n		var siteNum;\n		if (jsonSite.properties.RegistrationNum.indexOf(';') == -1) {\n			siteNum = jsonSite.properties.RegistrationNum;\n		} else {\n			siteNum = jsonSite.properties.RegistrationNum.substring(0, jsonSite.properties.RegistrationNum.indexOf(';'));\n		};\n		if (siteNum) {\n			siteNum = siteNum.replace('.', '_');\n			//getPhoto(jsonSite.properties.Town, siteNum);\n		};\n		var newSite = new HistoricSite({\n	        Name            : (jsonSite.properties.Name ? jsonSite.properties.Name : jsonSite.properties.Address),\n	        Address         : jsonSite.properties.Address,\n	        loc 			: jsonSite.geometry,\n	        Description 	: jsonSite.properties.Description,\n	        RegistrationNum : jsonSite.properties.RegistrationNum,\n	        Keywords		: jsonSite.properties.Keywords,\n	        Status 			: \"Published\"\n	    });\n	    newSite.save(function (err, site) {	\n	    });\n	};\n	res.redirect( '/');\n};\n\nexports.importPhotos = function(req, res, next){\n	var HistoricSite = mongoose.model( 'HistoricSite' );	\n	HistoricSite.find({Files: []}, function (err, sites) {\n		for (var i = 0; i < sites.length; i++) {\n			var site = sites[i];\n			var siteNum;\n			if (site.RegistrationNum.indexOf(';') == -1) {\n				siteNum = site.RegistrationNum;\n			} else {\n				siteNum = site.RegistrationNum.substring(0, site.RegistrationNum.indexOf(';'));\n			};\n			if (siteNum) {\n				siteNum = siteNum.replace('.', '_');				\n				generateThumbAndSave(siteNum, site);\n			};\n		};\n		res.redirect( '/');\n	});\n};\n\nfunction generateThumbAndSave (siteNum, newSite) {\n	fs.exists('C:/Temp/HistoricPhotos/' + siteNum + '.jpg', function (exists) {\n		if (exists) {\n			var fileRec = {\n	            Name: siteNum + '.jpg', \n	            DocumentType: 'Image', \n	            Credit: 'Massachusetts Historical Commission', \n	            Caption: 'Image of Location', \n	            Approved: true, \n	            URLFolder: null, \n	            ThumbName: null, \n	            FileName: null, \n	            FileStorage: GLOBAL.FileStorage,\n	            RealFolder: null\n	        };\n\n			var imageFolder = newSite._id + '/';	    		\n			var fileName = 'C:/Temp/HistoricPhotos/' + siteNum + '.jpg';\n			var saveThumb = {};\n			var saveFile = {};\n			var done = _.after(2, function () {\n	            if (saveThumb.FileName) {fileRec.ThumbName = saveThumb.FileName}; //its an image with a thumbnail\n	            fileRec.URLFolder = saveFile.URLFolder;\n	            fileRec.RealFolder = saveFile.RealFolder;\n	            fileRec.FileName = saveFile.FileName;\n\n	            newSite.Files.push(fileRec);            \n	            newSite.save(function (err, savedSite) {\n	                if( err ) return next( err );\n	            });\n	        });\n	        FileStorage.generateThumb(fileName, 150, 150, function (err, RealFolder, FileName){\n	            if( err ) { return console.log(err); };\n\n	            var outThumb = imageFolder + FileName\n	            var inImage = RealFolder + '/' + FileName;\n\n	            FileStorage.saveFile(inImage, outThumb, function (err, URLFolder, RealFolder, FileName) {\n	                if( err ) { return console.log(err); };\n	                FileStorage.deleteLocalFile(inImage , function () {});\n	                saveThumb = {URLFolder: URLFolder, RealFolder: RealFolder, FileName: FileName};\n	                done();\n	            });\n	        });\n	        FileStorage.saveFile(fileName, imageFolder + path.basename(fileName), function (err, URLFolder, RealFolder, FileName) {\n	            if( err ) { return console.log(err); };\n	            saveFile = {URLFolder: URLFolder, RealFolder: RealFolder, FileName: FileName};\n	            done();\n	        });		\n		};\n	});\n}\nfunction getPhoto (town, siteNum) {\n	var url = 'http://mhc-macris.net/Documents/' + town + '/Photos/' + siteNum + '.jpg';\n	var filename = path.basename(url);\n	console.log('C:/Temp/HistoricPhotos/' + filename);\n	fs.exists('C:/Temp/HistoricPhotos/' + siteNum + '.jpg', function (exists) {\n		if (!exists) {\n			request(url).pipe(fs.createWriteStream('C:/Temp/HistoricPhotos/' + filename));	\n		};\n	});	\n	// request(url, function (err, response, body) {\n	// 	if (!err && response.statusCode == 200) {	\n	// 		console.log('C:/Temp/HistoricPhotos/' + filename);\n	// 		request(url).pipe(fs.createWriteStream('C:/Temp/HistoricPhotos/' + filename));\n	// 	}\n	// });\n}\n\nvar historicSitesFromEureka = {\n\"type\":\"FeatureCollection\", \n\"features\": []\n};\n",
+			"file": "routes/index.js",
+			"file_size": 9540,
+			"file_write_time": 130355769435974383,
+			"settings":
+			{
+				"buffer_size": 9319,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "exports.getImageURLForSite = function(Files){\n	for (var i = 0; i < Files.length; i++) {\n		var item = Files[i];\n		if (item.DocumentType != 'Image') continue;\n		if (item.Obsolete) continue;\n		if (!item.Approved) continue;\n\n		return item.URLFolder + '/' + item.ThumbName;\n	};\n	return null;\n};",
+			"file": "util/siteUtils.js",
+			"file_size": 0,
+			"file_write_time": 130355252667937517,
+			"settings":
+			{
+				"buffer_size": 289,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app.js",
+			"settings":
+			{
+				"buffer_size": 7944,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "routes/cluster.js",
+			"settings":
+			{
+				"buffer_size": 4783,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "routes/sites.js",
+			"settings":
+			{
+				"buffer_size": 26979,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "views/index/index.ejs",
+			"settings":
+			{
+				"buffer_size": 27189,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "Refresh the Cluster upon saving sites",
+			"settings":
+			{
+				"buffer_size": 37,
+				"line_ending": "Windows",
+				"name": "Refresh the Cluster upon saving sites"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/ajohnson/Desktop/HistoricMapper/routes/cluster.js",
+		"/C/Users/ajohnson/Desktop/HistoricMapper/routes/sites.js",
+		"/C/Users/ajohnson/Desktop/MHCPtsBOS_CAM_BKL_QUI.geoJSON",
+		"/C/Users/ajohnson/Desktop/HistoricMapper/server-side-leaflet/leaflet.js",
+		"/C/Users/ajohnson/Desktop/MHCPtsGeoJSON.geoJSON",
+		"/C/Users/ajohnson/Desktop/HistoricMapper/public/javascripts/leaflet.markercluster-src.js",
+		"/C/Users/ajohnson/Desktop/HistoricMapper/public/javascripts/leaflet-src.js",
+		"/C/Users/ajohnson/Desktop/HistoricMapper/config/MHCPtsBOS_CAM_BKL_QUI.geoJSON",
+		"/C/Users/ajohnson/Desktop/BOS_692.txt",
+		"/C/temp/HistoricPhotos/BOS_692.jpg",
+		"/C/Users/ajohnson/Desktop/HistoricMapper/views/index/index.ejs",
+		"/C/Users/ajohnson/Desktop/HistoricMapper/views/head.ejs",
+		"/C/Users/ajohnson/Desktop/HistoricMapper/public/javascripts/leaflet-hash.js",
+		"/C/Users/ajohnson/Desktop/HistoricMapper/app.js",
+		"/C/Users/ajohnson/Desktop/HistoricMapper/db.js",
+		"/D/Adam/Desktop/Eureka/app.js",
+		"/D/Adam/Desktop/Eureka/views/500.ejs",
+		"/D/Adam/Desktop/Eureka/routes/index.js",
+		"/D/Adam/Desktop/Eureka/routes/moderator.js",
+		"/D/Adam/Desktop/Eureka/views/head.ejs",
+		"/D/Adam/Desktop/Eureka/views/user/login.ejs",
+		"/D/Adam/Desktop/Eureka/routes/user.js",
+		"/D/Adam/Desktop/Eureka/views/footer.ejs",
+		"/D/Adam/Desktop/Eureka/config/middleware/authorization.js",
+		"/C/Users/Adam/AppData/Roaming/Sublime Text 3/Packages/Default/Default (Windows).sublime-keymap",
+		"/D/Adam/Desktop/Eureka/Eureka.sublime-project",
+		"/D/Adam/Desktop/Eureka/schemas/HistoricSiteSchema.js",
+		"/D/Adam/Desktop/Eureka/Gruntfile.js",
+		"/D/Adam/Desktop/Eureka/routes/sites.js",
+		"/D/Adam/Desktop/Eureka/views/user/signup.ejs",
+		"/D/Adam/Desktop/Eureka/config/passport.js",
+		"/D/Adam/Desktop/Eureka/node_modules/passport/lib/passport/index.js",
+		"/D/Adam/Desktop/Eureka/schemas/UserSchema.js",
+		"/D/Adam/Desktop/Eureka/node_modules/passport/lib/passport/http/request.js",
+		"/D/Adam/Desktop/Eureka/db.js",
+		"/D/Adam/Desktop/Eureka/package.json",
+		"/D/Adam/Desktop/Eureka/views/leafletScripts.ejs",
+		"/D/Adam/Desktop/Eureka/views/index/index.ejs",
+		"/D/Adam/Desktop/Eureka/views/sites/create.ejs",
+		"/D/Adam/Desktop/Eureka/views/jqueryScripts.ejs",
+		"/D/Adam/Desktop/Eureka/public/javascripts/geomEditor.js",
+		"/D/Adam/Desktop/Eureka/util/hash.js",
+		"/D/Adam/Desktop/Eureka/public/javascripts/knockout-3.0.0.js",
+		"/D/Adam/Desktop/Eureka/public/javascripts/esri-leaflet-src.js",
+		"/D/Adam/Desktop/Eureka/views/sites/index.ejs",
+		"/D/Adam/Desktop/Eureka/views/sites/list.ejs",
+		"/D/Adam/Desktop/ExpressTest/SocialMapper/app.js",
+		"/D/Adam/Desktop/Eureka/views/index.ejs",
+		"/D/Eureka/Gruntfile.js",
+		"/D/Eureka/node_modules/node-inspector/node_modules/socket.io/node_modules/socket.io-client/node_modules/uglify-js/tmp/app.js"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 90.0,
+		"where_history":
+		[
+			"C:\\Users\\ajohnson\\Desktop\\HistoricMapper\\routes",
+			"C:\\Users\\ajohnson\\Desktop\\HistoricMapper"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"!map.hasLayer(searchResultsLyr)",
+			"generateMapMarkerCluster",
+			"cou",
+			"setPlaceIcon",
+			"itemClusters",
+			"iconCreateFunction",
+			"type: \"marker\", loc:",
+			"#featureList",
+			"var layer = value.getLayers()[0];",
+			"#searchResults",
+			"animationend",
+			"transition",
+			"getImageURLForSite",
+			"selectedFeature",
+			"getImageURLForSite",
+			"1024",
+			"animationend",
+			"this.fire",
+			"'move",
+			"end')",
+			"_animationZoomOut: function ()",
+			"mouseover",
+			"_inZoomAnimation",
+			"animationend",
+			"_featureGroup",
+			"mouseover",
+			"1024",
+			"calc",
+			"Architect/Builder: Blackall, Clapp and Whitt",
+			"EurekaLogo.png",
+			"site.",
+			"config",
+			"self",
+			"places",
+			"HistoricSite",
+			"GeekPlace",
+			"places",
+			"GeekPlace"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"model.",
+			"model",
+			"sites",
+			"HistoricSiteSchema",
+			"HistoricSite",
+			"sites",
+			"HistoricSite"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "config/config.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 904,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								904,
+								904
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "routes/index.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9319,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4697,
+								4697
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2160.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "util/siteUtils.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 289,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8,
+								8
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "app.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7944,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2052,
+								2052
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 270.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "routes/cluster.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4783,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2544,
+								2384
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1134.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "routes/sites.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 26979,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1113,
+								1113
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 410.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "views/index/index.ejs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 27189,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11854,
+								11854
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/EJS/EJS_default.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4235.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 37,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								37,
+								37
+							]
+						],
+						"settings":
+						{
+							"auto_name": "Refresh the Cluster upon saving sites",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 36.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "HistoricMapper.sublime-project",
+	"replace":
+	{
+		"height": 66.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"",
+				"Gruntfile.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 194.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

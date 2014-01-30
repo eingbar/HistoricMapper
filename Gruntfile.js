@@ -47,8 +47,15 @@ module.exports = function(grunt) {
         }
       },
       publicJS:{
-        files: ['public/javascripts/{,*/}*.js', '!public/javascripts/HistoricMapper.min.js', '!public/javascripts/jqueryFiles.min.js', '!public/javascripts/leafletFiles.min.js'],
+        files: ['public/javascripts/{,*/}*.js', '!public/javascripts/HistoricMapper.min.js', '!public/javascripts/jqueryFiles.min.js', '!public/javascripts/leafletFiles.min.js', '!public/javascripts/MapMainPage.js'],
         tasks: ['uglify'],
+        options: {
+          livereload: true
+        }
+      },
+      publicMainMapJS:{
+        files: ['public/javascripts/MapMainPage.js'],
+        tasks: [],
         options: {
           livereload: true
         }

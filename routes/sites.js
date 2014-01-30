@@ -12,6 +12,8 @@ var Tour = mongoose.model( 'Tour' );
 var Keyword = mongoose.model( 'Keyword' );
 var FileStorage = require('../util/FileStorage');
 var await = require('await');
+var siteUtils = require('../util/siteUtils');
+var cluster = require('./cluster');
 
 exports.index = function(req, res, next){
     HistoricSite.
@@ -31,7 +33,10 @@ exports.thematicTour = function (req, res, next) {
         if( err ) return next( err );
         var output = [];
         for (var i = 0; i < sites.length; i++) {
-            output.push({obj: {_id: sites[i]._id}});
+            var site = sites[i];
+            var Complete = (site.Description && (site.Files.length > 0 && getImageURLForSite(site.Files))? true : false);
+            var result = {type: "marker", loc: [site.loc.coordinates[1], site.loc.coordinates[0]], _id: site._id, ImageURL: getImageURLForSite(site.Files), Name: site.Name, Complete: Complete};
+            output.push({obj: result});
         };
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(output));
@@ -40,23 +45,46 @@ exports.thematicTour = function (req, res, next) {
 
 
 exports.textSearch = function (req, res, next) {
+    console.log(siteUtils);
     var filter = [{Status: 'Published'}];
     if (res.locals.user) {filter.push({Status: 'Draft', "DataOwner": res.locals.user._id});};
     if (res.locals.user && res.locals.user.userLevel >= 50) {filter.push({Status: 'Pending Review'});}
 
     var options = {
         filter: {$or: filter, Obsolete: false},
-        project: (req.query.project ? req.query.project : '_id'),
+        //project: (req.query.project ? req.query.project : '_id, Name'),
         lean: true
     };
 
-    if (req.query.project && req.query.project == "ALL_PROPERTIES") {options.project = ''}    
+    //if (req.query.project && req.query.project == "ALL_PROPERTIES") {options.project = ''}    
     
     HistoricSite.textSearch(req.params.text, options, function (err, output) {
         if (err) {return next(err)};
+        var results = [];
+        for (var i = 0; i < output.results.length; i++) {
+            var site = output.results[i].obj;
+            var Complete = (site.Description && (site.Files.length > 0 && getImageURLForSite(site.Files))? true : false);
+            var result = {type: "marker", loc: [site.loc.coordinates[1], site.loc.coordinates[0]], _id: site._id, ImageURL: getImageURLForSite(site.Files), Name: site.Name, Complete: Complete}
+            var outSite = output.results[i];
+            outSite.obj = result
+            results.push(outSite);
+        };
+        output.results = results;
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(output));
     });
+};
+
+function getImageURLForSite(Files){
+    for (var i = 0; i < Files.length; i++) {
+        var item = Files[i];
+        if (item.DocumentType != 'Image') continue;
+        if (item.Obsolete) continue;
+        if (!item.Approved) continue;
+
+        return item.URLFolder + '/' + item.ThumbName;
+    };
+    return null;
 };
 
 exports.getCreate = function(req, res, next){
@@ -221,6 +249,15 @@ exports.postEdit = function(req, res, next){
         site.RecModBy = res.locals.user._id;
         site.RecModDate = Date.now();
 
+        try{
+            var refreshCluster = false;
+            if (req.body.submitValue == "Publish Place" && site.Status != "Published") {refreshCluster = true;}
+            else if (site.Status == 'Published' && (req.body.submitValue == "Submit Place to Moderators" || req.body.submitValue == "Send Back To User (Set Draft Status)" || req.body.submitValue == "Delete Place")) {refreshCluster = true;};            
+        }
+        catch(err){
+            console.log(err);
+        }
+        
         if (req.body.submitValue == "Save Changes") {
             site.save( function ( err, site, count ){
                 if( err ) return next( err );
@@ -233,6 +270,10 @@ exports.postEdit = function(req, res, next){
                 if( err ) return next( err );
                 ReviewApproval.finishAllForPlace('Rejected', site._id, res.locals.user._id, function (err) {
                     if( err ) return next( err );
+                    if (refreshCluster) {
+                        cluster.refreshClusterData();
+                        console.log('refreshed');            
+                    };
                     req.flash('success', 'Place successfully deleted');
                     res.redirect( '/user/drafts/' );
                 }); 
@@ -255,7 +296,11 @@ exports.postEdit = function(req, res, next){
                     ReviewApproval.finishApproval("Draft", "Place", site._id, site._id, res.locals.user._id, function (err) {
                         if( err ) return next( err );
                         try{
-                            req.flash('success', 'Place sent back to user.');
+                            if (refreshCluster) {
+                                cluster.refreshClusterData();
+                                console.log('refreshed');            
+                            };
+                            req.flash('success', 'Place sent back to user.');                            
                             res.redirect( '/moderator/review' );
                         }
                         catch(err){
@@ -273,8 +318,12 @@ exports.postEdit = function(req, res, next){
             if ((res.locals.user.userLevel >= 50)) {
                 ReviewApproval.finishApproval("Published", "Place", site._id, site._id, res.locals.user._id, function (err) {
                     if( err ) return next( err );
+                    if (refreshCluster) {
+                        cluster.refreshClusterData();
+                        console.log('refreshed');            
+                    };
                     req.flash('success', 'Place successfully published');
-                    res.redirect( '/moderator/review' );
+                    res.redirect( '/moderator/review' );                
                 });
             } else {
                 req.flash('error', 'You do not have permissions to publish a place.');

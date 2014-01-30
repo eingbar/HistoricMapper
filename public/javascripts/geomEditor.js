@@ -71,7 +71,11 @@
             }
         }
         else {
-            map.fitBounds([[40.80838485820714, -124.14679527282715], [40.79707995086174, -124.18284416198732]]);
+            var bbstring = configInitialZoom.split(',');
+            var southWest = L.latLng(bbstring[1], bbstring[0]),
+                northEast = L.latLng(bbstring[3], bbstring[2]),
+                bounds = L.latLngBounds(southWest, northEast);
+            map.fitBounds(bounds);
         }
 
 // If the input came from an EditorFor, initialize editing-related events.

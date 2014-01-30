@@ -62,10 +62,13 @@ if ('development' == app.get('env')) {
 }
 
 var indexRoutes = require('./routes/index');
+var cluster = require('./routes/cluster');
 app.get('/', indexRoutes.index);
+app.get('/cluster', cluster.cluster)
 app.get('/historicdistricts/list', indexRoutes.historicDistricts);
 app.get('/historicsites/list', indexRoutes.placesGeoJson);
-app.get('/historicsites/import', Auth.isAdministrator, indexRoutes.importSites)
+app.get('/historicsites/import', Auth.isAdministrator, indexRoutes.importSites);
+app.get('/historicsites/importPhotos', Auth.isAdministrator, indexRoutes.importPhotos);
 
 /*Site Management Routes*/
 var sites = require('./routes/sites');
