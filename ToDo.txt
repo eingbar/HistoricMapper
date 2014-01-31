@@ -1,3 +1,9 @@
 ToDo:
 
-Refresh the Cluster upon saving sites
+Config to remove comments
+Config to remove login/register link
+**Fix 3rd line in tiles
+**Back button from details needs to zooms back to last extent on map
+Limit number of moderator
+limit number of admins
+Divable "small map"

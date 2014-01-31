@@ -3,7 +3,7 @@ var clust;
 var searchResultsLyr; 
 $(function(){
     map = L.map('map');
-    //var hash = new L.Hash(map);
+    
     var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     });
@@ -134,7 +134,7 @@ $(function(){
         bounds = L.latLngBounds(southWest, northEast);
     map.fitBounds(bounds);
     //map.fitBounds([[40.79464126562503, -124.18081641197203],[40.79596113137117, -124.17631030082701]]);//no places test view
-    
+    var hash = new L.Hash(map);
     lazyLoadPlaceImages();
     
     function refreshMap (data) {
@@ -447,7 +447,7 @@ $(function(){
         } else {                                    
             imageHtml = '<div class="noImageAvailable"><i class="fa fa-camera"></i></div>';
         };
-        listIetmTemplate += '<div style="" class="siteTile' + (selectedFeature && (selectedFeature._id == feature._id)? ' currentItem' : '') + '" data-id="' + feature._id + '" id="ListItem_' + feature._id + '"><div class="col-md-6"><figure class="thumbnail">' + imageHtml + '<figcaption style="font-size: 8pt;">' + feature.Name + '</figcaption></figure></div></div>';
+        listIetmTemplate += '<div style="" class="siteTile' + (selectedFeature && (selectedFeature._id == feature._id)? ' currentItem' : '') + '" data-id="' + feature._id + '" id="ListItem_' + feature._id + '"><div class="col-md-6"><figure class="thumbnail">' + imageHtml + '<div class="ellipsis"><div><figcaption style="font-size: 8pt;">' + feature.Name + '</figcaption></div></div></figure></div></div>';
         var item = $('div#featureList').append(listIetmTemplate);
         $('#ListItem_' + feature._id).click(handlePlaceTileClick);
 
