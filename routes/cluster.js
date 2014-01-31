@@ -49,6 +49,50 @@ function refreshClusterData () {
 	});
 }
 
+function geoSearchForPlaces (BBox, next) {
+	//[[[[0],[1]], [[2],[1]], [[2],[3]], [[0],[3]], [[0],[1]]]]	
+	try{
+		var boundsArr = BBox.split(',');
+		var south = parseFloat(boundsArr[1]);
+		var west = parseFloat(boundsArr[0]);
+		var north = parseFloat(boundsArr[3]);
+		var east = parseFloat(boundsArr[2]);
+		boundsArr = [[[west, south], [west, north], [east, north], [east, south], [west, south]]];
+		var query = {
+			loc: {
+				$geoWithin: {
+					$geometry:{
+						type: "Polygon",
+						coordinates: boundsArr
+					}
+				}
+			},			
+			Status: 'Published',
+			Obsolete: false
+		};
+		HistoricSite.find(query).sort({ RecModDate: 'desc'}).exec(function ( err, sites, count ){
+		    if( err ) {console.log(err);};
+		    var geoSites = createGeoJson(sites).features;
+		    var output = [];
+		    for (var i = 0; i < geoSites.length; i++) {
+		    	var site = geoSites[i];
+		    	var marker = {type: "marker", 
+		    		loc: [site.geometry.coordinates[1], site.geometry.coordinates[0]],
+		    		 _id: site.properties._id,
+		    		 ImageURL: site.properties.ImageURL,
+		    		 Name: site.properties.Name,
+		    		 Complete: site.properties.Complete
+		    	};
+		    	output.push(marker);
+		    };
+			next(null, output);
+		});
+	}
+	catch(err){
+		console.log(err);
+	}
+}
+
 refreshClusterData();
 
 function initMap () {
@@ -56,7 +100,7 @@ function initMap () {
 	map = L.map('map', {
         center: [38.543869175876154, -92.5433349609375],
         zoom: 1,
-        maxZoom: 19,
+        maxZoom: 17,
         fadeAnimation: false,
         zoomAnimation: false,
         markerZoomAnimation: false
@@ -73,17 +117,6 @@ function initMap () {
 exports.refreshClusterData = refreshClusterData;
 
 exports.cluster = function(req, res, next){	
-	//try{map.remove()}catch(err){}
-	//map = {};
-	try{
-		if (!map.remove) {
-			initMap();
-		};
-	}
-	catch(err){
-		console.log(err)
-	}	
-
 	var zoom = req.query.zoom; 
 	var boundsArr = req.query.BBox.split(',');
 
@@ -91,17 +124,21 @@ exports.cluster = function(req, res, next){
 	    northEast = L.latLng(boundsArr[3], boundsArr[2]),
 	    bounds = L.latLngBounds(southWest, northEast);
 
-	
-	map.fitBounds(bounds);
-	//map.setZoom(zoom);
-	// clusterLayer.on('animationend', function (e) {
-	// 	if (!clusterLayer._inZoomAnimation)
- //        	done();
- //    });
+	if (zoom < 18) {
+		//try{map.remove()}catch(err){}
+		//map = {};
+		try{
+			if (!map.remove) {
+				initMap();
+			};
+		}
+		catch(err){
+			console.log(err)
+		}	
+		
+		map.fitBounds(bounds);
 
-    var done = _.once(function () {
-		var features = {};
-	
+	    var features = {};	
 	    features = clusterLayer._featureGroup.getLayers().map(function (cluster) {
 	        var f = cluster.toGeoJSON();
 			var count = 0;
@@ -140,13 +177,16 @@ exports.cluster = function(req, res, next){
 	    for (var i = 0; i < features.length; i++) {
 	    	if (features[i]) {outFeatures.push(features[i]);};
 	    };
+	    
 		res.writeHead(200, { 'Content-Type': 'application/json' });
 		res.end(JSON.stringify(outFeatures));
-	});
-	done();
-	setTimeout(function () {
-		//done();
-	}, 200);	
+	} else {
+		geoSearchForPlaces (req.query.BBox, function (err, results) {
+			if (err) {console.log(err)};
+			res.writeHead(200, { 'Content-Type': 'application/json' });
+			res.end(JSON.stringify(results));
+		});
+	};	
 };
 
 function getImageURLForSite(Files){
