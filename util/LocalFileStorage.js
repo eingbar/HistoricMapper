@@ -14,7 +14,7 @@ var path = require('path');
 // 		path: "C:\Users\ajohnson\AppData\Local\Temp\5584-1d9df2f.JPG"
 // 		size: 1504102
 
-var destDir = path.resolve(__dirname, '..', 'public\\uploads\\');
+var destDir = path.resolve(__dirname, '..', 'public/uploads/');
 
 function saveFile (file, newFileName, next) {
 	//__dirname	
