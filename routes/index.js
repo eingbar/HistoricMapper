@@ -29,7 +29,10 @@ exports.index = function(req, res, next){
 		for (var i = 0; i < tourArr.length; i++) {
 			var tourName = tourArr[i];
 			HistoricSite.count({Tours:tourName}, function (err, count) {
-				if (err) {return next(err);};
+				if (err) {
+					console.log(err);
+					return next(err);
+				};
 				toursAwait.keep(tourName, count);
 			});
 		};
