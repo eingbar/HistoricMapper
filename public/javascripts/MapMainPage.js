@@ -159,7 +159,7 @@ $(function(){
         });
         c.pointData = point;
         if (c.pointData.type == "marker" && selectedFeature) {
-            if (selectedFeature._id == c.pointData.feature_id) {
+            if (selectedFeature.feature_id == c.pointData.feature_id) {
                 c.setIcon(setPlaceIcon(c.pointData, null, 'red'));
             };
         } else if (c.pointData.type == "marker" && !selectedFeature) {
@@ -288,13 +288,13 @@ $(function(){
         $('div#featureList').html("");
         for (var i = 0; i < results.length; i++) {
             var result = results[i];
-            var _id = result.obj._id;
+            var _id = result.obj.feature_id;
             searchResultsLyr.addLayer(generateMapMarkerCluster(result.obj));
         };
         
         for (var i = results.length - 1; i >= 0; i--) {
             var result = results[i];
-            var _id = result.obj._id;
+            var _id = result.obj.feature_id;
             var tile = $("div#featureList div#ListItem_" + _id)[0];
             $("#featureList").find(tile).prependTo("#featureList");
         };            
@@ -357,7 +357,7 @@ $(function(){
             var layer = value;
             var feature = value.pointData;
             if (feature.type != "cluster") {
-                if (id == feature._id) {
+                if (id == feature.feature_id) {
                     setPlaceIcon(feature, layer, 'red');
                     selectedFeature = feature;
                 } else {
@@ -370,7 +370,7 @@ $(function(){
             $.each(searchResultsLyr.getLayers(),function(index,value){
                 var layer = value;
                 var feature = layer.pointData;
-                if (id == feature._id) {
+                if (id == feature.feature_id) {
                     setPlaceIcon(feature, layer, 'red');
                     selectedFeature = feature;
                 } else {
@@ -380,7 +380,7 @@ $(function(){
         };
         if (selectedFeature) {
             $("#featurePanel").scrollTop(0);
-            map.setView(selectedFeature.loc, map.options.maxZoom);
+            map.setView([selectedFeature.loc.coordinates[1], selectedFeature.loc.coordinates[0]], map.options.maxZoom);
         };     
     }
 
@@ -442,9 +442,9 @@ $(function(){
         } else {                                    
             imageHtml = '<div class="noImageAvailable"><i class="fa fa-camera"></i></div>';
         };
-        listIetmTemplate += '<div style="" class="siteTile' + (selectedFeature && (selectedFeature._id == feature._id)? ' currentItem' : '') + '" data-id="' + feature._id + '" id="ListItem_' + feature._id + '"><div class="col-md-6"><figure class="thumbnail">' + imageHtml + '<div class="ellipsis"><div><figcaption style="font-size: 8pt;">' + feature.Name + '</figcaption></div></div></figure></div></div>';
+        listIetmTemplate += '<div style="" class="siteTile' + (selectedFeature && (selectedFeature.feature_id == feature.feature_id)? ' currentItem' : '') + '" data-id="' + feature.feature_id + '" id="ListItem_' + feature.feature_id + '"><div class="col-md-6"><figure class="thumbnail">' + imageHtml + '<div class="ellipsis"><div><figcaption style="font-size: 8pt;">' + feature.Name + '</figcaption></div></div></figure></div></div>';
         var item = $('div#featureList').append(listIetmTemplate);
-        $('#ListItem_' + feature._id).click(handlePlaceTileClick);
+        $('#ListItem_' + feature.feature_id).click(handlePlaceTileClick);
 
         //layer.on('click', popupPlaceDetails);
     };

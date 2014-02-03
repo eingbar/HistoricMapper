@@ -35,7 +35,7 @@ exports.thematicTour = function (req, res, next) {
         for (var i = 0; i < sites.length; i++) {
             var site = sites[i];
             var Complete = (site.Description && (site.Files.length > 0 && getImageURLForSite(site.Files))? true : false);
-            var result = {type: "marker", loc: [site.loc.coordinates[1], site.loc.coordinates[0]], _id: site._id, ImageURL: getImageURLForSite(site.Files), Name: site.Name, Complete: Complete};
+            var result = {type: "marker", loc: { coordinates: [site.loc.coordinates[0], site.loc.coordinates[1]], type:"Point"}, feature_id: site._id, ImageURL: getImageURLForSite(site.Files), Name: site.Name, Complete: Complete};
             output.push({obj: result});
         };
         res.writeHead(200, { 'Content-Type': 'application/json' });

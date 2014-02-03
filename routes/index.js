@@ -19,34 +19,33 @@ exports.index = function(req, res, next){
 		if (Tours.length == 0) {
 			var random = (req.query.random ? req.query.random : null);
     		res.render( 'index/index', {random: random, tours: []});
+    		return next(null);
 		};
+
+
 		var tourArr = [];
 		for (var i = 0; i < Tours.length; i++) {
 			tourArr.push(Tours[i].Text);
 		};
 		var toursAwait = await(tourArr);
-
+		var tours = [];
+		//[ { Name: 'Sample', Count: 1 } ]
+		var done = _.after(tourArr.length, function () {
+			var random = (req.query.random ? req.query.random : null);
+    		res.render( 'index/index', {random: random, tours: tours});
+		});
 		for (var i = 0; i < tourArr.length; i++) {
 			var tourName = tourArr[i];
 			HistoricSite.count({Tours:tourName}, function (err, count) {
 				if (err) {
-					console.log(err);
 					return next(err);
 				};
-				toursAwait.keep(tourName, count);
+				if (count > 0) {
+					tours.push({Name: tourName, Count: count});
+				};				
+				done();
 			});
 		};
-
-		toursAwait.then(function (data) {
-			var tours = [];
-			for (var i = 0; i < tourArr.length; i++) {
-				if (data[tourArr[i]] > 0) {
-					tours.push({Name: tourArr[i], Count: data[tourArr[i]]});
-				};				
-			};
-			var random = (req.query.random ? req.query.random : null);
-    		res.render( 'index/index', {random: random, tours: tours});
-		})
 	});	
 };
 
