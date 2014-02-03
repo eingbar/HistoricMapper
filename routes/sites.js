@@ -272,7 +272,6 @@ exports.postEdit = function(req, res, next){
                     if( err ) return next( err );
                     if (refreshCluster) {
                         cluster.refreshClusterData();
-                        console.log('refreshed');            
                     };
                     req.flash('success', 'Place successfully deleted');
                     res.redirect( '/user/drafts/' );
@@ -298,7 +297,6 @@ exports.postEdit = function(req, res, next){
                         try{
                             if (refreshCluster) {
                                 cluster.refreshClusterData();
-                                console.log('refreshed');            
                             };
                             req.flash('success', 'Place sent back to user.');                            
                             res.redirect( '/moderator/review' );
@@ -320,7 +318,6 @@ exports.postEdit = function(req, res, next){
                     if( err ) return next( err );
                     if (refreshCluster) {
                         cluster.refreshClusterData();
-                        console.log('refreshed');            
                     };
                     req.flash('success', 'Place successfully published');
                     res.redirect( '/moderator/review' );                
@@ -488,7 +485,7 @@ exports.postUploadDocument = function(req, res, next){
             site.Files.push(fileRec);            
             site.save(function (err, savedSite) {
                 if( err ) return next( err );
-                FileStorage.deleteLocalFile(req.files.Name.path , function () {});
+                //FileStorage.deleteLocalFile(req.files.Name.path , function () {});
                 if (!approved) {
                     ReviewApproval.createApproval(DocumentType, fileRec.Caption, savedSite.Files[savedSite.Files.length - 1]._id, SiteID, res.locals.user._id, function (err) {
                         if( err ) return next( err );  

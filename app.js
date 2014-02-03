@@ -60,9 +60,11 @@ app.use(app.router);
 if ('development' == app.get('env')) {
   
 }
+var cluster = require('./routes/cluster');
+//app.get('/checkThis', cluster2.CheckThis);
 
 var indexRoutes = require('./routes/index');
-var cluster = require('./routes/cluster');
+//var cluster = require('./routes/cluster');
 app.get('/', indexRoutes.index);
 app.get('/cluster', cluster.cluster)
 app.get('/historicdistricts/list', indexRoutes.historicDistricts);

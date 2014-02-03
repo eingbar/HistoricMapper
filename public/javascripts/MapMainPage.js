@@ -142,7 +142,7 @@ $(function(){
         for (var i = 0; i < data.length; i++) {
             var point = data[i];
             if (!point) {continue;};
-            if (!map.getBounds().contains(new L.LatLng(point.loc[0], point.loc[1]))) {
+            if (!map.getBounds().contains(new L.LatLng(point.loc.coordinates[1], point.loc.coordinates[0]))) {
                 continue;
             };
             playLayer.addLayer(generateMapMarkerCluster(point));
@@ -154,12 +154,12 @@ $(function(){
 
     function generateMapMarkerCluster (point) {            
         //within the ajax response handler            
-        var c = new L.Marker(new L.LatLng(point.loc[0], point.loc[1]), {
+        var c = new L.Marker(new L.LatLng(point.loc.coordinates[1], point.loc.coordinates[0]), {
             icon: iconCreateFunction(point) // ensures single markers are rendered as clusters
         });
         c.pointData = point;
         if (c.pointData.type == "marker" && selectedFeature) {
-            if (selectedFeature._id == c.pointData._id) {
+            if (selectedFeature._id == c.pointData.feature_id) {
                 c.setIcon(setPlaceIcon(c.pointData, null, 'red'));
             };
         } else if (c.pointData.type == "marker" && !selectedFeature) {
@@ -167,11 +167,11 @@ $(function(){
         };
         c.on("click", function (e) {                            
             if (e.target.pointData.type == "cluster") {
-                var boundsArr = e.target.pointData.bbox;
-                var southWest = L.latLng(boundsArr[0], boundsArr[1]),
-                    northEast = L.latLng(boundsArr[2], boundsArr[3]),
-                    bounds = L.latLngBounds(southWest, northEast);
-                map.fitBounds(bounds);
+                // var boundsArr = e.target.pointData.bbox;
+                // var southWest = L.latLng(boundsArr[0], boundsArr[1]),
+                //     northEast = L.latLng(boundsArr[2], boundsArr[3]),
+                //     bounds = L.latLngBounds(southWest, northEast);
+                map.fitBounds(new L.Polygon((new L.GeoJSON(e.target.pointData.convexHull)).getLayers()[0].getLatLngs()));
             } else if (e.target.pointData.type == "marker") {                        
                 popupPlaceDetails(e);
             };
@@ -181,12 +181,7 @@ $(function(){
                 if (window._shownPolygon) {
                     map.removeLayer(window._shownPolygon);
                 }
-                latLngs = [];
-                for (var i = 0; i < e.target.pointData.convexHull.length; i++) {
-                    var latLng = e.target.pointData.convexHull[i];
-                    latLngs.push(L.latLng(latLng.lat, latLng.lng));
-                };
-                window._shownPolygon = new L.Polygon(latLngs);
+                window._shownPolygon = new L.Polygon((new L.GeoJSON(e.target.pointData.convexHull)).getLayers()[0].getLatLngs());
                 map.addLayer(window._shownPolygon);
             };
         });
@@ -390,7 +385,7 @@ $(function(){
     }
 
     function popupPlaceDetails(event){
-        var _id = (event.target.pointData ? event.target.pointData._id : event.target.feature.properties._id);
+        var _id = (event.target.pointData ? event.target.pointData.feature_id : event.target.feature.properties._id);
         $.ajax({
             dataType: "json",
             url: '/sites/sitePopupData/' + _id,
