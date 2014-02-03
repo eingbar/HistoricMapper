@@ -19,7 +19,7 @@ var destDir = path.resolve(__dirname, '..', 'public/uploads/');
 function saveFile (file, newFileName, next) {
 	//__dirname	
 	newFileName = newFileName.replace(path.basename(newFileName), path.basename(file));
-	var newPath = destDir + '\\' +  newFileName;	
+	var newPath = destDir + '/' +  newFileName;	
 	var destURL = '/uploads/' + newFileName;
 
 	fs.mkdirp(path.dirname(newPath), function (err) {
