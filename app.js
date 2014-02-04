@@ -66,7 +66,8 @@ var cluster = require('./routes/cluster');
 var indexRoutes = require('./routes/index');
 //var cluster = require('./routes/cluster');
 app.get('/', indexRoutes.index);
-app.get('/cluster', cluster.cluster)
+app.get('/cluster', cluster.cluster);
+app.get('/cluster/refresh', Auth.isAdministrator, cluster.getRefreshClusterData);
 app.get('/historicdistricts/list', indexRoutes.historicDistricts);
 app.get('/historicsites/list', indexRoutes.placesGeoJson);
 app.get('/historicsites/import', Auth.isAdministrator, indexRoutes.importSites);

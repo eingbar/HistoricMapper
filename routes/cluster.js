@@ -6,12 +6,19 @@ var Cluster = mongoose.model( 'Cluster' );
 var clusterLayer;
 var disableClusteringAtZoom = 17;
 
-exports.checkThis = function (req, res, next) {
+// exports.checkThis = function (req, res, next) {
+// 	refreshClusterData(function function_name (err, clusters) {
+// 		res.writeHead(200, { 'Content-Type': 'application/json' });
+// 		res.end(JSON.stringify({}));	
+// 	});
+// }
+
+exports.getRefreshClusterData = function(req, res, next){
 	refreshClusterData(function function_name (err, clusters) {
 		res.writeHead(200, { 'Content-Type': 'application/json' });
-		res.end(JSON.stringify({}));	
+		res.end(JSON.stringify(clusters));	
 	});
-}
+};
 
 exports.cluster = function(req, res, next){	
 	var zoom = req.query.zoom; 
@@ -163,7 +170,7 @@ function refreshClusterData (next) {
 				Cluster.update({obsolete: true}, {$set: {obsolete: false}}, { multi: true }, function (err) {
 					if (err) {return next(err);};
 					if (typeof next === 'function'){						
-						next(null);
+						next(null, CandM);
 					};
 				});
 			});

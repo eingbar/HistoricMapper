@@ -64,7 +64,7 @@ exports.textSearch = function (req, res, next) {
         for (var i = 0; i < output.results.length; i++) {
             var site = output.results[i].obj;
             var Complete = (site.Description && (site.Files.length > 0 && getImageURLForSite(site.Files))? true : false);
-            var result = {type: "marker", loc: [site.loc.coordinates[1], site.loc.coordinates[0]], _id: site._id, ImageURL: getImageURLForSite(site.Files), Name: site.Name, Complete: Complete}
+            var result = {type: "marker", loc: { coordinates: [site.loc.coordinates[0], site.loc.coordinates[1]], type:"Point"}, feature_id: site._id, ImageURL: getImageURLForSite(site.Files), Name: site.Name, Complete: Complete}
             var outSite = output.results[i];
             outSite.obj = result
             results.push(outSite);

@@ -414,7 +414,7 @@ $(function(){
                 
                 $("#sitePopupModal .modal-body").html('\
                     <div class="media">\
-                    <div class="media-body">' + (data.Description ? data.Description : '<span style="font-style:italic">No Description Available</span>') + '</div>\
+                    <div class="media-body">' + (data.Description ? data.Description.replace(/\n/g, "<br />") : '<span style="font-style:italic">No Description Available</span>') + '</div>\
                     ' + (data.Files.length > 0 ? imagesHtml:'') + '\
                 </div>');
                 $('#sitePopupModal').modal();

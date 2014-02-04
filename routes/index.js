@@ -22,12 +22,10 @@ exports.index = function(req, res, next){
     		return next(null);
 		};
 
-
 		var tourArr = [];
 		for (var i = 0; i < Tours.length; i++) {
 			tourArr.push(Tours[i].Text);
 		};
-		var toursAwait = await(tourArr);
 		var tours = [];
 		//[ { Name: 'Sample', Count: 1 } ]
 		var done = _.after(tourArr.length, function () {
@@ -36,18 +34,28 @@ exports.index = function(req, res, next){
 		});
 		for (var i = 0; i < tourArr.length; i++) {
 			var tourName = tourArr[i];
-			HistoricSite.count({Tours:tourName}, function (err, count) {
-				if (err) {
-					return next(err);
+			getTour(tourName, function (err, tour) {
+				if (tour) {
+					tours.push(tour);
 				};
-				if (count > 0) {
-					tours.push({Name: tourName, Count: count});
-				};				
 				done();
 			});
 		};
 	});	
 };
+
+function getTour (tourName, next) {
+	HistoricSite.count({Tours:tourName}, function (err, count) {
+		if (err) {
+			return next(err);
+		};
+		if (count > 0) {
+			next(null, {Name: tourName, Count: count});
+		} else {
+			next(null, null);
+		}
+	});
+}
 
 exports.historicDistricts = function(req, res, next){
 	HistoricDistrict.find({Obsolete: false}, function (err, districts) {
@@ -137,16 +145,47 @@ function createGeoJson (obj, next) {
 	catch(err){next(err);}	
 }
 
-var file = '../import.geojson';
+//var file = './import.geojson';
 exports.importSites = function(req, res, next){
 	var HistoricSite = mongoose.model( 'HistoricSite' );	
+	
+	// console.log('Start Parsing of JSON...');
+	// var data = require('../import');
+	// console.log('Done Parsing JSON...');
+	// for (var i = 0; i < data.features.length; i++) {
+	// 	var jsonSite = data.features[i];
+	// 	var siteNum;
+	// 	if (jsonSite.properties.RegistrationNum.indexOf(';') == -1) {
+	// 		siteNum = jsonSite.properties.RegistrationNum;
+	// 	} else {
+	// 		siteNum = jsonSite.properties.RegistrationNum.substring(0, jsonSite.properties.RegistrationNum.indexOf(';'));
+	// 	};
+	// 	if (siteNum) {
+	// 		siteNum = siteNum.replace('.', '_');
+	// 		//getPhoto(jsonSite.properties.Town, siteNum);
+	// 	};
+	// 	var newSite = new HistoricSite({
+	//         Name            : (jsonSite.properties.Name ? jsonSite.properties.Name : jsonSite.properties.Address),
+	//         Address         : jsonSite.properties.Address,
+	//         loc 			: jsonSite.geometry,
+	//         Description 	: jsonSite.properties.Description,
+	//         RegistrationNum : jsonSite.properties.RegistrationNum,
+	//         Keywords		: jsonSite.properties.Keywords,
+	//         Status 			: "Published"
+	//     });
+	//     newSite.save(function (err, site) {	
+	//     });
+	// };
+	// res.redirect( '/');
 	fs.readFile(file, 'utf8', function (err, data) {
 		if (err) {
+			console.log(err);
 			res.redirect( '/');
 			return;
 		}
+		console.log('Start Parsing of JSON...');
 		var data = JSON.parse(data);
-		
+		console.log('Done Parsing JSON...');
 		for (var i = 0; i < data.features.length; i++) {
 			var jsonSite = data.features[i];
 			var siteNum;
