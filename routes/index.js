@@ -145,7 +145,30 @@ function createGeoJson (obj, next) {
 	catch(err){next(err);}	
 }
 
-//var file = './import.geojson';
+var file = './import.geojson';
+exports.importDistricts = function(req, res, next){
+	//HistoricDistrict
+	fs.readFile(file, 'utf8', function (err, data) {
+		if (err) {
+			console.log(err);
+			res.redirect( '/');
+			return;
+		}
+		console.log('Start Parsing of JSON...');
+		var data = JSON.parse(data);
+		console.log('Done Parsing JSON...');
+		for (var i = 0; i < data.features.length; i++) {
+			var jsonDistrict = data.features[i];			
+			var newDistrict = new HistoricDistrict({
+		        Name            : jsonDistrict.properties.NAME,
+		        loc 			: jsonDistrict.geometry,
+		    });
+		    newDistrict.save(function (err, site) {	
+		    });
+		};
+		res.redirect( '/');
+	});
+};
 exports.importSites = function(req, res, next){
 	var HistoricSite = mongoose.model( 'HistoricSite' );	
 	

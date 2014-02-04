@@ -71,6 +71,7 @@ app.get('/cluster/refresh', Auth.isAdministrator, cluster.getRefreshClusterData)
 app.get('/historicdistricts/list', indexRoutes.historicDistricts);
 app.get('/historicsites/list', indexRoutes.placesGeoJson);
 app.get('/historicsites/import', Auth.isAdministrator, indexRoutes.importSites);
+app.get('/historicDistricts/import', Auth.isAdministrator, indexRoutes.importDistricts);
 app.get('/historicsites/importPhotos', Auth.isAdministrator, indexRoutes.importPhotos);
 
 /*Site Management Routes*/
