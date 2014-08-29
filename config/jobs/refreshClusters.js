@@ -10,7 +10,7 @@ rule.hour = 0; rule.minute = 0;
 
 var j = schedule.scheduleJob(rule, function(){
 	try{
-		cluster.refreshClusterData();
+		//cluster.refreshClusterData();
 	}
 	catch(err){
 		console.log(err);

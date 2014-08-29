@@ -52,7 +52,7 @@ app.use(function (req, res, next) {
   res.locals.flashSuccess = req.flash('success');
   next();
 });
-app.locals({title: 'Historic Mapper'})
+app.locals({title: 'Info'})
 app.use(app.router);
 //app.use(express.errorHandler());
 

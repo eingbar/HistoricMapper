@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var L = require('../server-side-leaflet/leaflet');
+var clustering = require('../server-side-leaflet/clustering');
 var mongoose = require( 'mongoose' );
 var HistoricSite = mongoose.model( 'HistoricSite' );
 var Cluster = mongoose.model( 'Cluster' );
@@ -15,8 +16,9 @@ var disableClusteringAtZoom = 17;
 
 exports.getRefreshClusterData = function(req, res, next){
 	refreshClusterData(function function_name (err, clusters) {
-		res.writeHead(200, { 'Content-Type': 'application/json' });
-		res.end(JSON.stringify(clusters));	
+		// res.writeHead(200, { 'Content-Type': 'application/json' });
+		// res.end(JSON.stringify(clusters));	
+		next();
 	});
 };
 
@@ -118,9 +120,10 @@ function geoGetClusters (BBox, zoom, next) {
 		};
 
 		if (count == 0) {
-			refreshClusterData(function (argument) {
-				done();
-			});
+			// refreshClusterData(function (argument) {
+			// 	done();
+			// });
+			done();
 		} 
 		else {
 			done();
@@ -129,61 +132,79 @@ function geoGetClusters (BBox, zoom, next) {
 }
 
 function refreshClusterData (next) {	
+	console.log('Loading Sites...');
 	HistoricSite.find({Status: 'Published', Obsolete: false}).exec(function ( err, sites, count ){
 	    if( err ) return next( err );
+	    console.log('Done Loading Sites...');
+	    console.log('Creating GeoJSON Sites...');	    
 	    var data = createGeoJson(sites).features;
-		initMap(data);
-		var CandM = [];
-		for(var zoomLevel in clusterLayer._gridClusters) {
-		   for(var row in clusterLayer._gridClusters[zoomLevel]._grid){
-		   		for(var column in clusterLayer._gridClusters[zoomLevel]._grid[row]){
-		   			for (var i = 0; i < clusterLayer._gridClusters[zoomLevel]._grid[row][column].length; i++) {
-		   				var cluster = clusterLayer._gridClusters[zoomLevel]._grid[row][column][i];
-		   				//console.log('Zoom: ' + zoomLevel + ' / Row: ' + row + ' / Column: ' + column + ' / ClusterCount: ' + cluster.getConvexHull());
-		   				var boundBox = cluster.getBounds().toBBoxString().split(",");
-						var south = parseFloat(boundBox[1]);
-						var west = parseFloat(boundBox[0]);
-						var north = parseFloat(boundBox[3]);
-						var east = parseFloat(boundBox[2]);
-						//boundsArr = [[west, south], [west, north], [east, north], [east, south], [west, south]];
-						//bboxpolypoly = new L.Polygon(boundsArr);
-		   				CandM.push({type: "cluster", zoomLevel: parseInt(zoomLevel) + 1, count: cluster.getChildCount(), loc: L.marker(cluster.getLatLng()).toGeoJSON().geometry, convexHull: L.polygon(cluster.getConvexHull()).toGeoJSON().geometry, bbox: [[south, west], [north, east]]});
-		   			};		   			
-		   		}		   		
-		   }
-		}
-		for(var zoomLevel in clusterLayer._gridUnclustered) {
-		   for(var row in clusterLayer._gridUnclustered[zoomLevel]._grid){
-		   		for(var column in clusterLayer._gridUnclustered[zoomLevel]._grid[row]){
-		   			for (var i = 0; i < clusterLayer._gridUnclustered[zoomLevel]._grid[row][column].length; i++) {
-		   				var cluster = clusterLayer._gridUnclustered[zoomLevel]._grid[row][column][i];
-		   				//console.log('Zoom: ' + zoomLevel + ' / Row: ' + row + ' / Column: ' + column + ' / ClusterCount: ' + cluster.getLatLng());
-		   				CandM.push({type: "marker", zoomLevel: parseInt(zoomLevel) + 1, loc: L.marker(cluster.getLatLng()).toGeoJSON().geometry, feature_id: cluster.feature.properties._id, ImageURL: cluster.feature.properties.ImageURL, Name: cluster.feature.properties.Name, Complete: cluster.feature.properties.Complete});
-		   			};		   			
-		   		}		   		
-		   }
-		}
+	    console.log('Done Creating GeoJSON Sites...');
+	    sites = null;
+	 //    console.log('Initing Map...');
+		// initMap(data);
+		// console.log('Done Initing Map...');
+		// var CandM = [];
+		// console.log('Processing Clusters...');
+		// for(var zoomLevel in clusterLayer._gridClusters) {
+		//    for(var row in clusterLayer._gridClusters[zoomLevel]._grid){
+		//    		for(var column in clusterLayer._gridClusters[zoomLevel]._grid[row]){
+		//    			for (var i = 0; i < clusterLayer._gridClusters[zoomLevel]._grid[row][column].length; i++) {
+		//    				var cluster = clusterLayer._gridClusters[zoomLevel]._grid[row][column][i];
+		//    				console.log('Zoom: ' + zoomLevel + ' / Row: ' + row + ' / Column: ' + column);
+		//    				var boundBox = cluster.getBounds().toBBoxString().split(",");
+		// 				var south = parseFloat(boundBox[1]);
+		// 				var west = parseFloat(boundBox[0]);
+		// 				var north = parseFloat(boundBox[3]);
+		// 				var east = parseFloat(boundBox[2]);
+		// 				//boundsArr = [[west, south], [west, north], [east, north], [east, south], [west, south]];
+		// 				//bboxpolypoly = new L.Polygon(boundsArr);
+		//    				CandM.push({type: "cluster", zoomLevel: parseInt(zoomLevel) + 1, count: cluster.getChildCount(), loc: L.marker(cluster.getLatLng()).toGeoJSON().geometry, convexHull: L.polygon(cluster.getConvexHull()).toGeoJSON().geometry, bbox: [[south, west], [north, east]]});
+		//    			};		   			
+		//    		}		   		
+		//    }
+		// }
+		// console.log('Processing Markers...');
+		// for(var zoomLevel in clusterLayer._gridUnclustered) {
+		//    for(var row in clusterLayer._gridUnclustered[zoomLevel]._grid){
+		//    		for(var column in clusterLayer._gridUnclustered[zoomLevel]._grid[row]){
+		//    			for (var i = 0; i < clusterLayer._gridUnclustered[zoomLevel]._grid[row][column].length; i++) {
+		//    				var cluster = clusterLayer._gridUnclustered[zoomLevel]._grid[row][column][i];
+		//    				//console.log('Zoom: ' + zoomLevel + ' / Row: ' + row + ' / Column: ' + column + ' / ClusterCount: ' + cluster.getLatLng());
+		//    				CandM.push({type: "marker", zoomLevel: parseInt(zoomLevel) + 1, loc: L.marker(cluster.getLatLng()).toGeoJSON().geometry, feature_id: cluster.feature.properties._id, ImageURL: cluster.feature.properties.ImageURL, Name: cluster.feature.properties.Name, Complete: cluster.feature.properties.Complete});
+		//    			};		   			
+		//    		}		   		
+		//    }
+		// }
 
-		var done = _.after(CandM.length, function () {			
-			Cluster.remove({obsolete: false}, function (err) {
-				if (err) {return next(err);};
-				Cluster.update({obsolete: true}, {$set: {obsolete: false}}, { multi: true }, function (err) {
+		var CandM = [];			
+
+		clustering(data, function (clusters) {
+			CandM = clusters;
+
+			var done = _.after(CandM.length, function () {
+				CandM = null;
+				data = null;
+				Cluster.remove({obsolete: false}, function (err) {
 					if (err) {return next(err);};
-					if (typeof next === 'function'){						
-						next(null, CandM);
-					};
+					Cluster.update({obsolete: true}, {$set: {obsolete: false}}, { multi: true }, function (err) {
+						if (err) {return next(err);};
+						if (typeof next === 'function'){							
+							next(null);
+						};
+					});
 				});
-			});
-		});
+			});	
 
-		for (var i = 0; i < CandM.length; i++) {
-			var cluster = CandM[i];
-			cluster.obsolete = true;
-			Cluster.create(cluster, function (err, savedCluster) {
-				if (err) {console.log(err)};
-				done();
-			});
-		};		
+			console.log('Saving everything...');
+			for (var i = 0; i < CandM.length; i++) {
+				var cluster = CandM[i];
+				cluster.obsolete = true;
+				Cluster.create(cluster, function (err, savedCluster) {
+					if (err) {console.log(err)};
+					done();
+				});
+			};	
+		});			
 	});	
 }
 exports.refreshClusterData = refreshClusterData;
@@ -212,9 +233,10 @@ function createGeoJson (sites) {
 	try{
 		var output = {};
 		output.type = "FeatureCollection"
-		output.features = [];
+		output.features = new Array(sites.length);
 
 		for (var i = 0; i < sites.length; i++) {
+			//if (i % 1000 == 0){console.log(i);};			
 			var site = sites[i];
 			var feature = {"type": "Feature", "properties": {}, "geometry": {}};
 			feature.geometry = site.loc;
@@ -229,9 +251,10 @@ function createGeoJson (sites) {
 				var url = null;
 				feature.properties.ImageURL = url;
 			};
-			output.features.push(feature);
+			// //output.features.push(feature);
+			output.features[i] = feature;
 		};
-		return output
+		return output;
 	}
 	catch(err){console.log(err);}	
 };
