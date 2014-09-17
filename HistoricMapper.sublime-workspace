@@ -80,6 +80,10 @@
 		"selected_items":
 		[
 			[
+				"c#",
+				"Set Syntax: C#"
+			],
+			[
 				"word",
 				"Word Wrap: Toggle"
 			],
@@ -108,6 +112,11 @@
 	},
 	"file_history":
 	[
+		"/C/Users/ajohnson/Desktop/VehicleController.vb",
+		"/C/Users/ajohnson/Desktop/HistoricMapper/config/jobs/refreshClusters.js",
+		"/C/Users/ajohnson/Desktop/HistoricMapper/node_modules/aws-sdk/dist/js/jquery-1.9.1.js",
+		"/C/Users/ajohnson/Desktop/HistoricMapper/config/cronJobs.js",
+		"/C/Users/ajohnson/Desktop/HistoricMapper/server-side-leaflet/sample-data.geojson",
 		"/C/Users/ajohnson/Desktop/HistoricMapper/app.js",
 		"/C/Users/ajohnson/Desktop/Douglas County/Server info.txt",
 		"/C/Users/ajohnson/Desktop/201320 - NERDS3/Notes.txt",
@@ -129,12 +138,10 @@
 		"/C/Users/ajohnson/Desktop/HistoricMapper/node_modules/grunt/node_modules/js-yaml/node_modules/argparse/node_modules/underscore.string/test/test_underscore/vendor/jquery.js",
 		"/C/Users/ajohnson/Desktop/HistoricMapper/node_modules/express/node_modules/send/lib/send.js",
 		"/C/Users/ajohnson/Desktop/HistoricMapper/node_modules/aws-sdk/doc-src/templates/api-versions/templates/default/layout/html/setup.rb",
-		"/C/Users/ajohnson/Desktop/HistoricMapper/node_modules/aws-sdk/dist/js/jquery-1.9.1.js",
 		"/C/Users/ajohnson/Desktop/HistoricMapper/public/stylesheets/style.css",
 		"/C/Users/ajohnson/Desktop/HistoricMapper/routes/cluster_old.js",
 		"/C/Users/ajohnson/Desktop/HistoricMapper/views/sites/details.ejs",
 		"/C/Users/ajohnson/Desktop/HistoricMapper/schemas/ClusterSchema.js",
-		"/C/Users/ajohnson/Desktop/HistoricMapper/config/jobs/refreshClusters.js",
 		"/C/Users/ajohnson/Desktop/HistoricMapper/public/javascripts/leaflet.markercluster-src.js",
 		"/C/Users/ajohnson/Desktop/HistoricMapper/schemas/TourSchema.js",
 		"/C/Users/ajohnson/Desktop/HistoricMapper/util/FileStorage.js",
@@ -201,6 +208,7 @@
 		"height": 90.0,
 		"where_history":
 		[
+			"C:\\Users\\ajohnson\\Desktop\\HistoricMapper\\",
 			"C:\\Users\\ajohnson\\Desktop\\HistoricMapper\\routes",
 			"C:\\Users\\ajohnson\\Desktop\\HistoricMapper"
 		]
@@ -210,6 +218,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"refreshClusterData",
 			"._id",
 			"click",
 			"cluster",
