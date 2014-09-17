@@ -1,5 +1,5 @@
 /**
- * Created by Adam on 10/1/13.
+ * Created by Adam on 10/1/13. Terri is on the phone
  */
 var mongoose = require( 'mongoose' );
 var Schema   = mongoose.Schema;
